@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c0d0c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TriCoach">
+<title>TriCoach</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%230c0d0c%22%2F%3E%3Cpath%20d%3D%22M15%2017h34M32%2017v28%22%20stroke%3D%22%233fd35f%22%20stroke-width%3D%227%22%20stroke-linecap%3D%22round%22%20fill%3D%22none%22%2F%3E%3Cpath%20d%3D%22M15%2054h8%22%20stroke%3D%22%233ee0c6%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M28%2054h8%22%20stroke%3D%22%23b48cff%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M41%2054h8%22%20stroke%3D%22%235cc8ff%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0d0c; --panel:#151715; --panel2:#1c1f1c; --line:#2a2e2a;
+  --text:#f1f3ee; --mute:#9aa197; --dim:#6b7268;
+  --accent:#3fd35f; --accent2:#a5efb4; --ok:#7ee08a; --warn:#ffd166;
+  --str:#3fd35f; --run:#5cc8ff; --bike:#b48cff; --swim:#3ee0c6; --hyrox:#ffd166; --mob:#9aa197; --rest:#3a3f39;
+  --r:14px;
+  --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 Inter,system-ui,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+.app{max-width:560px;margin:0 auto;min-height:100vh;padding:calc(var(--safe-t) + 14px) 16px calc(var(--safe-b) + 92px)}
+header.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:10px;font:800 24px/1 "Barlow Condensed",sans-serif;letter-spacing:.5px;text-transform:uppercase}
+.brand svg{width:30px;height:30px}
+.iconbtn{background:var(--panel);border:1px solid var(--line);border-radius:12px;width:40px;height:40px;display:grid;place-items:center;cursor:pointer}
+h1,h2,h3{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.4px;margin:0}
+h1{font-size:34px;line-height:1}
+h2{font-size:22px;margin:22px 0 10px}
+h3{font-size:18px}
+.mute{color:var(--mute)} .dim{color:var(--dim)} .small{font-size:13px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.card.tight{padding:12px 14px}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.wrap{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.btn{background:var(--accent);color:#04140a;border:0;border-radius:12px;padding:13px 18px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.block{width:100%}
+.btn.ghost{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.btn.sm{padding:8px 12px;font-size:13px;border-radius:10px}
+.btn:disabled{opacity:.5;cursor:default}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);color:var(--mute)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+label.f{display:block;margin:12px 0 6px;font-size:13px;color:var(--mute);font-weight:600}
+input.i,select.i,textarea.i{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:11px 12px;outline:none}
+input.i:focus,select.i:focus,textarea.i:focus{border-color:var(--accent)}
+textarea.i{min-height:80px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);cursor:pointer;font-size:14px}
+.chip.on{background:var(--accent);color:#04140a;border-color:var(--accent);font-weight:700}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:rgba(12,13,12,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 8px calc(var(--safe-b) + 8px);z-index:10}
+nav.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav.tabs button{background:none;border:0;color:var(--dim);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:6px 0;cursor:pointer}
+nav.tabs button.on{color:var(--accent)}
+nav.tabs svg{width:22px;height:22px}
+/* week strip */
+.strip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:14px}
+.strip button{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 0 9px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer}
+.strip button.sel{border-color:var(--accent);background:#0f2216}
+.strip .d{font-size:11px;color:var(--mute);font-weight:600}
+.strip .n{font:700 18px/1 "Barlow Condensed",sans-serif}
+.strip .st{width:16px;height:4px;border-radius:2px}
+.hero{border-radius:var(--r);padding:18px;margin-bottom:12px;background:linear-gradient(140deg,#0f1e15 0%,#151715 60%);border:1px solid #1f3d28}
+.hero .type{font:700 13px/1 Inter;letter-spacing:1.2px;text-transform:uppercase}
+.item{border-top:1px solid var(--line);padding:12px 0}
+.item:first-child{border-top:0;padding-top:4px}
+.item .nm{font-weight:700}
+.kv{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--mute);margin-top:3px}
+.kv b{color:var(--text);font-weight:600}
+.setgrid{display:grid;grid-template-columns:34px 1fr 1fr 40px;gap:6px;align-items:center;margin-top:8px}
+.setgrid .h{font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase}
+.setgrid input{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px;text-align:center}
+.chk{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);display:grid;place-items:center;cursor:pointer}
+.chk.on{background:var(--ok);border-color:var(--ok);color:#06210b}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.stat .v{font:800 30px/1 "Barlow Condensed",sans-serif}
+.stat .l{font-size:12px;color:var(--mute);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+/* chat */
+.chat{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.msg{max-width:86%;padding:10px 13px;border-radius:14px;white-space:pre-wrap;word-wrap:break-word}
+.msg.u{align-self:flex-end;background:var(--accent);color:#04140a;border-bottom-right-radius:4px}
+.msg.a{align-self:flex-start;background:var(--panel);border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg.sys{align-self:center;font-size:12px;color:var(--mute);background:none;padding:2px}
+.composer{position:fixed;left:0;right:0;bottom:calc(var(--safe-b) + 66px);padding:8px 16px;z-index:9}
+.composer .in{max-width:528px;margin:0 auto;display:flex;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:6px}
+.composer input{flex:1;background:none;border:0;outline:none;padding:8px}
+.composer textarea{flex:1;background:none;border:0;outline:none;padding:8px;resize:none;max-height:120px;min-width:0}
+.composer.iv{bottom:var(--safe-b)}
+.ivbar{height:4px;background:var(--panel2);border-radius:2px;overflow:hidden;margin:14px 0 16px}
+.ivbar div{height:100%;background:var(--accent);transition:width .3s}
+.quick{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;scrollbar-width:none}
+.quick button{white-space:nowrap}
+/* misc */
+.empty{text-align:center;padding:30px 10px}
+.empty svg{width:54px;height:54px;color:var(--accent);margin-bottom:8px}
+.toast{position:fixed;left:50%;bottom:calc(var(--safe-b) + 90px);transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;z-index:50;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90%}
+.toast.show{opacity:1}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);border:1px solid var(--line);border-bottom:0;border-radius:20px 20px 0 0;width:100%;max-width:560px;max-height:92vh;overflow:auto;padding:20px 16px calc(var(--safe-b) + 20px)}
+.spinner{width:18px;height:18px;border:2.5px solid rgba(0,0,0,.25);border-top-color:currentColor;border-radius:50%;animation:sp .8s linear infinite}
+.btn.ghost .spinner{border-color:rgba(255,255,255,.2);border-top-color:var(--text)}
+@keyframes sp{to{transform:rotate(360deg)}}
+.phasebar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:10px 0 6px}
+.phasebar div{height:100%}
+.bars{display:flex;align-items:flex-end;gap:6px;height:120px;margin-top:10px}
+.bars .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.bars .bar{width:100%;border-radius:4px 4px 0 0;background:var(--accent);min-height:2px}
+.bars .bar.cur{background:var(--accent2)}
+.bars .lb{font-size:10px;color:var(--dim)}
+.bars .vl{font-size:10px;color:var(--mute)}
+.rmrow{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-top:1px solid var(--line)}
+.rmrow:first-child{border-top:0}
+.rmrow .v{font:700 22px/1 "Barlow Condensed",sans-serif}
+.del{background:none;border:0;color:var(--dim);cursor:pointer;padding:4px}
+.review{background:var(--panel2);border-left:3px solid var(--accent);border-radius:8px;padding:12px;white-space:pre-wrap;font-size:14px}
+.progress{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden}
+.progress div{height:100%;background:var(--ok)}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<nav class="tabs" id="tabs"><div class="in"></div></nav>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ helpers ============ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad = n => String(n).padStart(2,"0");
+const iso = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const parseD = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y,m-1,d); };
+const addDays = (d,n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+const monday = d => { const x = new Date(d.getFullYear(),d.getMonth(),d.getDate()); const w=(x.getDay()+6)%7; return addDays(x,-w); };
+const today = () => iso(new Date());
+const planStart = () => { const n=new Date(); return n.getDay()===0 ? addDays(monday(n),7) : monday(n); };
+const DOW = ["Mo","Di","Mi","Do","Fr","Sa","So"];
+const DOWL = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
+const MON = ["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
+const fmtD = s => { const d=parseD(s); return DOWL[(d.getDay()+6)%7]+", "+d.getDate()+". "+MON[d.getMonth()]; };
+const num = v => { const m = String(v ?? "").replace(",",".").match(/-?\d+(\.\d+)?/); return m ? parseFloat(m[0]) : null; };
+const uid = () => Math.random().toString(36).slice(2,10);
+const weeksUntil = s => Math.ceil((parseD(s) - new Date())/(7*864e5));
+
+const TYPES = {
+  strength:{l:"Kraft",c:"var(--str)"}, run:{l:"Laufen",c:"var(--run)"}, bike:{l:"Rad",c:"var(--bike)"},
+  swim:{l:"Schwimmen",c:"var(--swim)"}, hyrox:{l:"Hyrox",c:"var(--hyrox)"}, hybrid:{l:"Hybrid",c:"var(--hyrox)"},
+  mobility:{l:"Mobility",c:"var(--mob)"}, rest:{l:"Ruhetag",c:"var(--rest)"},
+  brick:{l:"Koppel Rad+Lauf",c:"var(--bike)"}, triathlon:{l:"Triathlon",c:"var(--swim)"}
+};
+const T = t => TYPES[t] || TYPES.hybrid;
+
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2400); }
+
+/* ============ state & storage ============ */
+const KEYS = ["profile","plan","logs","season","chat","history","imported","conn","interview"];
+const DEF = {
+  profile:{ onboarded:false, name:"", goals:"", level:"mittel", sports:["strength","run"], equipment:"Fitnessstudio", limitations:"", lang:"de" },
+  plan:null, logs:{}, season:{ events:[] }, chat:[], history:[], imported:[], interview:{ active:false, done:false, skipped:false, msgs:[], summary:"", err:"" }, conn:{ gemKey:"", gemModel:"", icuKey:"", icuId:"0", autoPush:true, lastSync:0 }
+};
+const S = {}; const LS = "hybridcoach_v1_";
+for (const k of KEYS){ let v=null; try{ v = JSON.parse(localStorage.getItem(LS+k)); }catch(e){} S[k] = v ?? structuredClone(DEF[k]); }
+
+let sample=null;
+function save(k){ try{ localStorage.setItem(LS+k, JSON.stringify(S[k])); }catch(e){} }
+function initCaps(){ sample = S.conn.gemKey ? makeGemini() : null; }
+
+/* ============ Gemini (kostenloser Google-KI-Schlüssel) ============ */
+function gemSchema(x){
+  if (Array.isArray(x)) return x.map(gemSchema);
+  if (x && typeof x==="object"){ const o={}; for (const [k,v] of Object.entries(x)) o[k] = k==="type" && typeof v==="string" ? v.toUpperCase() : gemSchema(v); return o; }
+  return x;
+}
+const sleep = ms => new Promise(res=>setTimeout(res,ms));
+async function pickModel(){
+  let r; try{ r = await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=200", { headers:{ "x-goog-api-key": S.conn.gemKey } }); }catch(e){ throw Object.assign(new Error("Keine Internetverbindung zur Google-KI"),{code:"network"}); }
+  if (!r.ok){ let msg=""; try{ msg=(await r.json()).error?.message||""; }catch(e){} throw Object.assign(new Error("Google-KI-Schlüssel ungültig oder gesperrt. "+msg),{code:"bad_key"}); }
+  const j = await r.json();
+  const ver = n => { const m = n.match(/(\d+(?:\.\d+)?)/); return m ? parseFloat(m[1]) : 0; };
+  const names = (j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent")).map(m=>m.name.replace(/^models\//,""));
+  const flash = names.filter(n=>/flash/.test(n) && !/image|tts|audio|live|embed|vision|robot|computer/.test(n));
+  // Stabile Modelle zuerst (Preview/Exp sind oft überlastet), dann neueste Version, Lite zuletzt
+  const score = n => ver(n)*100 - (/lite/.test(n)?30:0) - (/preview|exp/.test(n)?150:0) - (/\d{2}-\d{2}|\d{3}$/.test(n)?1:0);
+  const list = (flash.length?flash:names.filter(n=>/gemini/.test(n))).sort((a,b)=>score(b)-score(a));
+  if (!list.length) throw Object.assign(new Error("Kein passendes Google-KI-Modell für diesen Schlüssel gefunden"),{code:"no_model"});
+  S.conn.models = list; S.conn.autoModel = list[0]; save("conn"); return list[0];
+}
+async function gemCall(contents, opts={}, retried){
+  const {tools, json} = opts;
+  const body = { contents, generationConfig:{ temperature:0.7 } };
+  if (json) body.generationConfig.responseMimeType = "application/json";
+  if (tools?.length) body.tools = [{ functionDeclarations: tools.map(t=>({ name:t.name, description:t.description, parameters: gemSchema(t.inputSchema) })) }];
+  if (!S.conn.autoModel && !S.conn.gemModel) await pickModel();
+  // Kandidatenliste: gewähltes Modell zuerst, danach Ausweichmodelle bei Überlastung
+  const first = S.conn.gemModel || S.conn.autoModel;
+  const candidates = [first, ...(S.conn.models||[]).filter(m=>m!==first)].filter(Boolean).slice(0,4);
+  let lastErr;
+  for (const model of candidates){
+    // Pro Modell bis zu 3 Versuche mit Wartezeit (1.5 s, 3 s) bei 500/503/504
+    for (let attempt=0; attempt<3; attempt++){
+      let r;
+      try{
+        r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+          method:"POST", headers:{ "Content-Type":"application/json", "x-goog-api-key": S.conn.gemKey }, body: JSON.stringify(body) });
+      }catch(e){ throw Object.assign(new Error("Keine Internetverbindung zur Google-KI"),{code:"network"}); }
+      if (r.ok){
+        const j = await r.json();
+        const c = j.candidates?.[0];
+        if (!c?.content?.parts) throw Object.assign(new Error("Leere Antwort der KI"+(c?.finishReason?" ("+c.finishReason+")":"")),{code:"empty"});
+        if (model!==first && !S.conn.gemModel){ S.conn.autoModel = model; save("conn"); }
+        return c.content;
+      }
+      let msg=""; try{ msg=(await r.json()).error?.message||""; }catch(e){}
+      if (r.status===429) throw Object.assign(new Error("Gratis-Kontingent der Google-KI gerade aufgebraucht – kurz warten oder morgen wieder."),{code:"rate_limited"});
+      if (r.status===400||r.status===401||r.status===403) throw Object.assign(new Error("Google-KI-Schlüssel ungültig oder gesperrt. "+msg),{code:"bad_key"});
+      if (r.status===404 || /no longer available|not found|is not supported/i.test(msg)){
+        lastErr = Object.assign(new Error("Modell "+model+" nicht verfügbar"),{code:"upstream"});
+        break; // nächstes Modell
+      }
+      lastErr = Object.assign(new Error("Google-KI Fehler "+r.status+" "+msg),{code:"upstream"});
+      if ([500,502,503,504].includes(r.status) && attempt<2){ await sleep(1500*(attempt+1)); continue; }
+      break; // nächstes Modell
+    }
+  }
+  if (!retried && S.conn.models?.length){ // Modellliste evtl. veraltet → neu laden und einmal erneut versuchen
+    S.conn.autoModel=""; S.conn.models=[]; if (!S.conn.gemModel || /nicht verfügbar/.test(lastErr?.message||"")) S.conn.gemModel="";
+    save("conn"); await pickModel(); return gemCall(contents, opts, true);
+  }
+  throw Object.assign(new Error("Die Google-KI ist gerade überlastet (alle Modelle probiert). Dein Schlüssel ist gespeichert – bitte in 1–2 Minuten nochmal versuchen."),{code:"upstream"});
+}
+function makeGemini(){
+  const toContents = input => typeof input==="string" ? [{role:"user",parts:[{text:input}]}] : input.map(m=>({role:m.role==="assistant"?"model":"user",parts:[{text:m.content}]}));
+  const fn = async (input, opts={}) => {
+    const contents = toContents(input);
+    for (let round=0; round<6; round++){
+      const content = await gemCall(contents, { tools: opts.tools, json: opts.json });
+      const calls = content.parts.filter(p=>p.functionCall);
+      if (calls.length && opts.tools){
+        contents.push({role:"model", parts: content.parts});
+        const resp = [];
+        for (const c of calls){
+          const t = opts.tools.find(t=>t.name===c.functionCall.name);
+          let out; try{ out = { result: await t.execute(c.functionCall.args||{}) }; }catch(e){ out = { error: String(e.message||e) }; }
+          resp.push({ functionResponse:{ name:c.functionCall.name, response: out } });
+        }
+        contents.push({role:"user", parts: resp});
+        continue;
+      }
+      const text = content.parts.filter(p=>p.text && !p.thought).map(p=>p.text).join("").trim();
+      opts.onText?.({text, delta:text});
+      return { text };
+    }
+    return { text:"Ich habe den Plan angepasst." };
+  };
+  fn.json = async (input, opts={}) => { const r = await fn(input, {...opts, json:true}); const t=r.text; return JSON.parse(t.slice(t.indexOf("{"), t.lastIndexOf("}")+1)); };
+  return fn;
+}
+
+/* ============ AI ============ */
+function profileText(){
+  const p=S.profile;
+  return `Name: ${p.name||"-"}
+Ziele: ${p.goals||"-"}
+Level: ${p.level}
+Sportarten: ${p.sports.map(s=>T(s).l).join(", ")}
+Ausstattung: ${p.equipment||"-"}
+Einschränkungen/Verletzungen: ${p.limitations||"keine"}${S.interview?.summary?"\nCOACH-ANAMNESE (aus dem Erstgespräch):\n"+S.interview.summary:""}`;
+}
+function seasonText(){
+  const ev = S.season.events.filter(e=>e.date>=today()).sort((a,b)=>a.date.localeCompare(b.date));
+  if (!ev.length) return "Keine Wettkämpfe geplant.";
+  return ev.map(e=>`- ${e.name} (${e.type}) am ${e.date}, Priorität ${e.prio||"A"}, in ${weeksUntil(e.date)} Wochen. Aktuelle Phase: ${phaseFor(e).name}`).join("\n");
+}
+function recentText(){
+  const logs = Object.values(S.logs).filter(l=>l.done).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10);
+  if (!logs.length) return "Noch keine absolvierten Einheiten.";
+  const rms = oneRMs().slice(0,6).map(r=>`${r.name}: ~${r.rm} kg`).join(", ");
+  return logs.map(l=>`- ${l.date} ${l.title} (RPE ${l.rpe||"?"})${l.note?": "+l.note:""}`).join("\n") + (rms?`\nGeschätzte 1RM: ${rms}`:"") + `\nKonstanz letzte 4 Wochen: ${consistency(28)}%`;
+}
+const PLAN_SCHEMA = `{"focus":"Wochenfokus kurz","phase":"z.B. Grundlage/Aufbau/Peak/Tapering","days":[{"date":"YYYY-MM-DD","title":"kurzer Titel","type":"strength|run|bike|swim|brick|hyrox|hybrid|mobility|rest","durationMin":0,"intensity":"leicht|moderat|hart","notes":"Coaching-Hinweis","garmin":"NUR bei Lauf/Rad/Schwimmen/Koppel: Workout-Schritte im intervals.icu-Textformat, sonst leerer String","items":[{"name":"Übung","kind":"strength|cardio","sets":4,"reps":"6","load":"80 kg oder RPE 8","target":"z.B. 5:30 min/km, Zone 2, 8x400m","notes":""}]}]}
+
+Wichtig: durationMin ist die Gesamtdauer der Einheit in Minuten (Zahl). Du legst sie pro Einheit selbst fest, der Athlet gibt sie nicht vor. Ruhetag: 0.
+
+Format für "garmin" (nur Herzfrequenz-Zonen Z1-Z5 mit "HR", Zeilen mit "- ", Abschnitte durch Leerzeile getrennt, Wiederholungen als "Main Set 5x"), Beispiel:
+"Warmup\n- 10m Z1 HR\n\nMain Set 5x\n- 3m Z4 HR\n- 2m Z1 HR\n\nCooldown\n- 10m Z1 HR"`;
+
+async function aiJSON(prompt, tier){
+  if (!sample) throw new Error("KI nicht verfügbar");
+  let v;
+  if (typeof sample.json === "function"){ v = await sample.json(prompt, { modelTier: tier||"default" }); }
+  else { const r = await sample(prompt, { modelTier: tier||"default" }); v = JSON.parse(r.text.slice(r.text.indexOf("{"), r.text.lastIndexOf("}")+1)); }
+  if (typeof v === "string") v = JSON.parse(v.slice(v.indexOf("{"), v.lastIndexOf("}")+1));
+  return v;
+}
+function normalizePlan(p, start){
+  const days=[];
+  for (let i=0;i<7;i++){
+    const date = iso(addDays(start,i));
+    const d = (p.days||[]).find(x=>x.date===date) || (p.days||[])[i] || {type:"rest",title:"Ruhetag"};
+    days.push({ id:date, date, title:d.title||T(d.type).l, type:TYPES[d.type]?d.type:"hybrid", durationMin:+d.durationMin||0,
+      intensity:d.intensity||"", notes:d.notes||"", garmin:String(d.garmin||""), items:(d.items||[]).map(it=>({ name:it.name||"Übung", kind:it.kind==="cardio"?"cardio":"strength", sets:+it.sets||(it.kind==="cardio"?1:3), reps:String(it.reps??""), load:String(it.load??""), target:String(it.target??""), notes:String(it.notes??"") })) });
+  }
+  return { start: iso(start), focus:p.focus||"", phase:p.phase||"", days, created: Date.now(), source:p.source||"ai" };
+}
+async function generateWeek(start, extra){
+  const prompt = `Du bist ein erfahrener Triathlon-Coach (Schwimmen, Rad, Laufen und ergänzendes Krafttraining). Erstelle einen konkreten Trainingsplan für die Woche ab Montag ${iso(start)} (7 Tage, Montag bis Sonntag).
+
+ATHLET:
+${profileText()}
+
+SAISON / WETTKÄMPFE:
+${seasonText()}
+
+LETZTE TRAININGS:
+${recentText()}
+${extra?`\nZUSÄTZLICHER WUNSCH: ${extra}\n`:""}
+Regeln: Lege die Anzahl der Trainingstage selbst fest (typisch 3 bis 6, je nach Phase, Belastbarkeit, Verfügbarkeit und Empfehlung aus der Anamnese; ohne Anamnese eher 4 bis 5), Rest Ruhe- oder Mobility-Tage. Harte und leichte Tage sinnvoll verteilen, keine schweren Beine vor Intervall-Läufen. Krafteinheiten mit konkreten Übungen, Sätzen, Wiederholungen und Gewicht (falls 1RM bekannt in kg, sonst RPE). Ausdauereinheiten mit konkreter Struktur (Dauer/Distanz, Pace oder Zone). DAUER: Der Athlet gibt keine Dauer vor. Lege durationMin jeder Einheit selbst so fest, wie ein Coach es logisch plant: passend zu Disziplin, Trainingsziel, Saisonphase, aktuellem Stand und den Zeitfenstern aus der Anamnese (unter der Woche eher kürzer, lange Rad- oder Laufeinheit an einem freien Tag, Technik-Schwimmen kürzer als Grundlagenausdauer, Schlüssel- und Koppeleinheiten länger). Die Dauer muss zu den Inhalten passen: Sätze, Pausen, Distanzen und Intervalle ergeben zusammen etwa diese Zeit. Steigere den Umfang gegenüber den letzten Trainings vernünftig (grob höchstens 10 % pro Woche). Sprache Deutsch.${S.profile.sports.includes("triathlon")?`
+TRIATHLON: Der Athlet trainiert für Triathlon. Jede Woche Schwimmen, Radfahren und Laufen (je mind. 1x, Schwerpunkt nach Schwäche/Phase), ab der Aufbauphase 1 Koppeltraining (type "brick": Rad direkt gefolgt von kurzem Lauf, beide als items). Schwimmen mit konkreten Sätzen (z.B. 8x100 m, Technik-Drills), Rad/Lauf mit Zonen. Krafttraining 1-2x als Ergänzung (Rumpf, Beine, Schultern). Wähle Distanzen passend zum Wettkampf (Sprint/Olympisch/70.3/Ironman).`:""}
+
+Antworte NUR mit JSON in genau diesem Format:
+${PLAN_SCHEMA}`;
+  const p = await aiJSON(prompt, "complex");
+  return normalizePlan(p, start);
+}
+
+/* fallback template, if AI unavailable */
+const DUR = {strength:50,run:50,bike:80,swim:45,brick:90,mobility:25,hyrox:60,hybrid:60,triathlon:120};
+function templateWeek(start){
+  const p=S.profile, sp=p.sports, n=Math.max(2,Math.min(7,+p.days||5));
+  const patterns = {2:[0,3],3:[0,2,4],4:[0,1,3,5],5:[0,1,3,4,5],6:[0,1,2,3,4,5],7:[0,1,2,3,4,5,6]};
+  const slots = patterns[n];
+  const endu = sp.filter(s=>["run","bike","swim"].includes(s)); if(!endu.length) endu.push("run");
+  const S1 = {title:"Kraft Unterkörper",type:"strength",items:[["Kniebeuge",4,"6","RPE 7-8"],["Rumänisches Kreuzheben",3,"8","RPE 7"],["Ausfallschritte",3,"10/Seite","moderat"],["Plank",3,"45 s",""]]};
+  const S2 = {title:"Kraft Oberkörper",type:"strength",items:[["Bankdrücken",4,"6","RPE 7-8"],["Klimmzüge",4,"6-8","Körpergewicht"],["Schulterdrücken",3,"8","RPE 7"],["Rudern Kurzhantel",3,"10","moderat"]]};
+  const E = t => ({run:{title:"Lockerer Dauerlauf",target:"Zone 2, Gesprächstempo"},bike:{title:"Grundlage Rad",target:"Zone 2"},swim:{title:"Technik Schwimmen",target:"10x100 m locker"}})[t];
+  const I = {title:"Intervall-Lauf",type:"run",target:"6x800 m @ 10-km-Tempo, 2 min Trabpause"};
+  const H = {title:"Hybrid Conditioning",type:sp.includes("hyrox")?"hyrox":"hybrid",items:[["Rudern",1,"1000 m","zügig"],["Wall Balls",4,"20","9/6 kg"],["Farmer Carry",4,"40 m","schwer"],["Burpee Broad Jumps",4,"10",""]]};
+  if (sp.includes("triathlon")){
+    const tri = [
+      {title:"Schwimmen Technik",type:"swim",target:"Einschwimmen 300 m, 8x50 m Drills, 6x100 m locker"},
+      {title:"Rad Grundlage",type:"bike",target:"Zone 2, gleichmäßige Trittfrequenz 85-95"},
+      {title:"Kraft & Rumpf",type:"strength",items:[["Kniebeuge",3,"8","RPE 7"],["Rumänisches Kreuzheben",3,"8","RPE 7"],["Klimmzüge",3,"6-8","Körpergewicht"],["Plank",3,"45 s",""]]},
+      {title:"Lauf Intervalle",type:"run",target:"6x3 min Zone 4, 2 min Trabpause"},
+      {title:"Schwimmen Ausdauer",type:"swim",target:"4x400 m gleichmäßig, 30 s Pause"},
+      {title:"Koppeltraining",type:"brick",items:[["Rad",1,"","Zone 2–3"],["Lauf direkt danach",1,"","15 min Zone 2"]]},
+      {title:"Langer Lauf",type:"run",target:"Zone 2, locker"}];
+    const days=[];
+    for (let i=0;i<7;i++){ const k=slots.indexOf(i);
+      if (k<0){ days.push({date:iso(addDays(start,i)),type:"rest",title:"Ruhetag",notes:"Regeneration, Schlaf, Mobility."}); continue; }
+      const w=tri[k%tri.length];
+      const items = w.items ? w.items.map(([name,sets,reps,load])=>({name,kind:w.type==="brick"?"cardio":"strength",sets,reps,load,target:w.type==="brick"?load:""})) : [{name:w.title,kind:"cardio",sets:1,reps:"",load:"",target:w.target}];
+      days.push({date:iso(addDays(start,i)),type:w.type,title:w.title,durationMin:DUR[w.type]||60,intensity:/Intervall/.test(w.title)?"hart":"moderat",items});
+    }
+    return normalizePlan({focus:"Triathlon: Schwimmen, Rad, Laufen",phase:"Grundlage",days,source:"template"}, start);
+  }
+  const seq = [S1, {...E(endu[0]),type:endu[0]}, S2, I, H, {...E(endu[1%endu.length]),type:endu[1%endu.length],title:"Langer Grundlagentag"}, {title:"Mobility & Core",type:"mobility",items:[["Mobility-Flow",1,"20 min",""]]}];
+  const days = [];
+  for (let i=0;i<7;i++){
+    const k = slots.indexOf(i);
+    if (k<0){ days.push({date:iso(addDays(start,i)),type:"rest",title:"Ruhetag",notes:"Spazieren, Dehnen, Schlaf priorisieren."}); continue; }
+    const w = seq[k % seq.length];
+    const items = w.items ? w.items.map(([name,sets,reps,load])=>({name,kind:"strength",sets,reps,load})) : [{name:w.title,kind:"cardio",sets:1,reps:"",load:"",target:w.target}];
+    days.push({date:iso(addDays(start,i)),type:w.type,title:w.title,durationMin:DUR[w.type]||60,intensity:w===I||w===H?"hart":"moderat",items});
+  }
+  return normalizePlan({focus:"Ausgewogene Hybrid-Woche",phase:"Grundlage",days,source:"template"}, start);
+}
+
+/* ============ analytics ============ */
+function oneRMs(){
+  const best={};
+  for (const l of Object.values(S.logs)){ if(!l.done) continue;
+    for (const it of l.items||[]){ if(it.kind!=="strength") continue;
+      for (const s of it.sets||[]){ const kg=num(s.kg), r=num(s.reps); if(!kg||!r||r>12||!s.done) continue;
+        const rm = Math.round(kg*(1+r/30)); const k=it.name.trim();
+        if(!best[k]||rm>best[k].rm) best[k]={name:k,rm,kg,reps:r,date:l.date};
+      }}}
+  return Object.values(best).sort((a,b)=>b.rm-a.rm);
+}
+function rmHistory(name){
+  const pts=[];
+  for (const l of Object.values(S.logs)){ if(!l.done) continue;
+    for (const it of l.items||[]) if(it.name.trim()===name) { let m=0; for(const s of it.sets||[]){const kg=num(s.kg),r=num(s.reps); if(kg&&r&&r<=12&&s.done) m=Math.max(m,kg*(1+r/30));} if(m) pts.push({date:l.date,rm:Math.round(m)}); } }
+  return pts.sort((a,b)=>a.date.localeCompare(b.date));
+}
+function allPlannedDays(){
+  const m = {};
+  for (const w of S.history) for (const d of w.days) m[d.date]=d;
+  if (S.plan) for (const d of S.plan.days) m[d.date]=d;
+  return m;
+}
+function consistency(days){
+  const all = allPlannedDays(); const t=today(); const from=iso(addDays(new Date(),-days));
+  let planned=0, done=0;
+  for (const d of Object.values(all)) if (d.type!=="rest" && d.date>=from && d.date<=t){ planned++; if (S.logs[d.date]?.done) done++; }
+  return planned ? Math.round(done/planned*100) : 0;
+}
+function weekStats(n){
+  const out=[]; const m0 = monday(new Date());
+  for (let i=n-1;i>=0;i--){
+    const s=addDays(m0,-7*i), e=addDays(s,6); let ton=0, mins=0, cnt=0;
+    for (const l of Object.values(S.logs)){ if(!l.done) continue; const d=parseD(l.date); if(d<s||d>e) continue; cnt++;
+      mins += +l.duration||0;
+      for (const it of l.items||[]) if (it.kind==="strength") for (const st of it.sets||[]) if(st.done) ton += (num(st.kg)||0)*(num(st.reps)||0);
+    }
+    out.push({label:s.getDate()+"."+(s.getMonth()+1)+".", ton:Math.round(ton), mins, cnt, cur:i===0});
+  }
+  return out;
+}
+function totalKm(){ let km=0; for (const l of Object.values(S.logs)) if(l.done) for(const it of l.items||[]) if(it.kind==="cardio") km+=num(it.distance)||0; return Math.round(km*10)/10; }
+
+/* season phases */
+function phaseFor(ev){
+  const w = weeksUntil(ev.date);
+  if (w<0) return {name:"Vorbei",c:"var(--dim)"};
+  if (w<=1) return {name:"Tapering",c:"var(--ok)"};
+  if (w<=3) return {name:"Peak",c:"var(--accent)"};
+  if (w<=8) return {name:"Aufbau",c:"var(--warn)"};
+  return {name:"Grundlage",c:"var(--run)"};
+}
+
+/* ============ Garmin import (FIT / GPX / TCX / ZIP) ============ */
+const FIT_EPOCH = 631065600;
+const FIT_CATS = ["bench_press","calf_raise","cardio","carry","chop","core","crunch","curl","deadlift","flye","hip_raise","hip_stability","hip_swing","hyperextension","lateral_raise","leg_curl","leg_raise","lunge","olympic_lift","plank","plyo","pull_up","push_up","row","shoulder_press","shoulder_stability","shrug","sit_up","squat","total_body","triceps_extension","warm_up","run"];
+const CAT_DE = {bench_press:"Bankdrücken",calf_raise:"Wadenheben",carry:"Farmer Carry",core:"Core",crunch:"Crunches",curl:"Curls",deadlift:"Kreuzheben",flye:"Fliegende",hip_raise:"Hip Thrust",hyperextension:"Hyperextensions",lateral_raise:"Seitheben",leg_curl:"Beinbeuger",leg_raise:"Beinheben",lunge:"Ausfallschritte",olympic_lift:"Olympisches Heben",plank:"Plank",plyo:"Plyometrie",pull_up:"Klimmzüge",push_up:"Liegestütze",row:"Rudern",shoulder_press:"Schulterdrücken",shrug:"Shrugs",sit_up:"Sit-ups",squat:"Kniebeuge",total_body:"Ganzkörper",triceps_extension:"Trizepsdrücken"};
+const CAT_MATCH = {squat:/kniebeug|squat/i,deadlift:/kreuzheb|deadlift|rdl/i,bench_press:/bank|bench/i,pull_up:/klimmz|pull.?up|chin/i,row:/rudern|row/i,shoulder_press:/schulterdr|overhead|military|ohp|press/i,lunge:/ausfall|lunge|split/i,curl:/curl/i,plank:/plank|unterarmst/i,push_up:/liegest|push.?up/i,calf_raise:/wade|calf/i,hip_raise:/hip.?thrust|hüft/i,triceps_extension:/trizeps|tricep|dips/i,carry:/carry|farmer/i,lateral_raise:/seitheb|lateral/i,leg_curl:/beinbeug|leg.?curl/i};
+
+function parseFIT(buf){
+  const dv = new DataView(buf); const hs = dv.getUint8(0);
+  if (String.fromCharCode(dv.getUint8(8),dv.getUint8(9),dv.getUint8(10),dv.getUint8(11)) !== ".FIT") throw new Error("Keine FIT-Datei");
+  const end = Math.min(buf.byteLength, hs + dv.getUint32(4,true));
+  const defs = {}; let p = hs; const sessions=[], sets=[]; let lastTs = 0;
+  const SZ = {0:1,1:1,2:1,3:2,4:2,5:4,6:4,7:1,8:4,9:8,10:1,11:2,12:4,13:1,14:8,15:8,16:8};
+  const read = (bt, off, le) => { switch(bt){
+      case 0: case 2: case 10: case 13: { const v=dv.getUint8(off); return v===0xFF||(bt===10&&v===0)?null:v; }
+      case 1: { const v=dv.getInt8(off); return v===0x7F?null:v; }
+      case 3: { const v=dv.getInt16(off,le); return v===0x7FFF?null:v; }
+      case 4: case 11: { const v=dv.getUint16(off,le); return v===0xFFFF||(bt===11&&v===0)?null:v; }
+      case 5: { const v=dv.getInt32(off,le); return v===0x7FFFFFFF?null:v; }
+      case 6: case 12: { const v=dv.getUint32(off,le); return v===0xFFFFFFFF||(bt===12&&v===0)?null:v; }
+      case 8: return dv.getFloat32(off,le);
+      case 9: return dv.getFloat64(off,le);
+      default: return null; } };
+  while (p < end){
+    const h = dv.getUint8(p++);
+    if (h & 0x80){ // compressed timestamp
+      const d = defs[(h>>5)&3]; if(!d) throw new Error("FIT defekt");
+      const m = readMsg(d); m[253] = lastTs ? ((lastTs & ~0x1F) + (h & 0x1F)) : null; collect(d.g, m); continue; }
+    const lt = h & 0x0F;
+    if (h & 0x40){
+      p++; const le = dv.getUint8(p++)===0; const g = dv.getUint16(p,le); p+=2; const n = dv.getUint8(p++);
+      const fields=[]; for(let i=0;i<n;i++){ fields.push({num:dv.getUint8(p),size:dv.getUint8(p+1),bt:dv.getUint8(p+2)&0x1F}); p+=3; }
+      let dev=0; if (h & 0x20){ const nd=dv.getUint8(p++); for(let i=0;i<nd;i++){ dev+=dv.getUint8(p+1); p+=3; } }
+      defs[lt] = {g,le,fields,dev};
+    } else {
+      const d = defs[lt]; if(!d) throw new Error("FIT defekt");
+      const m = readMsg(d); if (m[253]) lastTs = m[253]; collect(d.g, m);
+    }
+  }
+  function readMsg(d){
+    const m={};
+    for (const f of d.fields){ const s=SZ[f.bt]||1; m[f.num] = (f.bt===7) ? null : (f.size>=s ? read(f.bt,p,d.le) : null); p+=f.size; }
+    p += d.dev; return m;
+  }
+  function collect(g,m){ if(g===18) sessions.push(m); else if(g===225) sets.push(m); }
+  if (!sessions.length) throw new Error("Keine Aktivität in der Datei");
+  const sportMap = {1:"run",2:"bike",5:"swim",4:"strength",10:"strength",11:"walk",17:"walk",15:"row"};
+  const s = sessions[0];
+  const start = (s[2]||s[253]||0) + FIT_EPOCH;
+  let kind = sportMap[s[5]] || "other"; if (s[5]===10 && s[6]!==20 && !sets.length) kind="hybrid";
+  return { id:"fit-"+start, start: start*1000, kind,
+    durationSec: (s[8]??s[7]??0)/1000, distanceM: (s[9]??0)/100, avgHr: s[16]||null, maxHr: s[17]||null, kcal: s[11]||null,
+    sets: sets.filter(x=>x[5]===1 || (x[5]==null && x[3])).map(x=>({ cat: FIT_CATS[x[7]] || null, reps: x[3]??null, kg: x[4]!=null ? Math.round(x[4]/16*10)/10 : null })) };
+}
+function haversine(a,b){ const R=6371000, r=Math.PI/180; const dLa=(b[0]-a[0])*r, dLo=(b[1]-a[1])*r; const x=Math.sin(dLa/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dLo/2)**2; return 2*R*Math.asin(Math.sqrt(x)); }
+function kindFromText(t){ t=(t||"").toLowerCase(); if(/run|lauf/.test(t)) return "run"; if(/bik|cycl|ride|rad/.test(t)) return "bike"; if(/swim|schwimm/.test(t)) return "swim"; if(/strength|kraft/.test(t)) return "strength"; if(/walk|hik|wander/.test(t)) return "walk"; return "other"; }
+function parseGPX(txt){
+  const x = new DOMParser().parseFromString(txt,"application/xml");
+  const pts=[...x.getElementsByTagName("trkpt")]; if(pts.length<2) throw new Error("GPX ohne Track");
+  let dist=0, hrs=[], prev=null;
+  for (const p of pts){ const c=[+p.getAttribute("lat"),+p.getAttribute("lon")]; if(prev) dist+=haversine(prev,c); prev=c;
+    const hr=[...p.getElementsByTagName("*")].find(e=>/(^|:)hr$/.test(e.tagName)); if(hr) hrs.push(+hr.textContent); }
+  const t0=new Date(pts[0].getElementsByTagName("time")[0]?.textContent), t1=new Date(pts[pts.length-1].getElementsByTagName("time")[0]?.textContent);
+  if (isNaN(t0)) throw new Error("GPX ohne Zeitangaben");
+  const type = x.getElementsByTagName("type")[0]?.textContent || x.getElementsByTagName("name")[0]?.textContent;
+  return { id:"gpx-"+(t0/1000|0), start:+t0, kind:kindFromText(type)==="other"?"run":kindFromText(type), durationSec:(t1-t0)/1000, distanceM:dist,
+    avgHr: hrs.length?Math.round(hrs.reduce((a,b)=>a+b,0)/hrs.length):null, maxHr: hrs.length?Math.max(...hrs):null, sets:[] };
+}
+function parseTCX(txt){
+  const x = new DOMParser().parseFromString(txt,"application/xml");
+  const act = x.getElementsByTagName("Activity")[0]; if(!act) throw new Error("TCX ohne Aktivität");
+  const id = act.getElementsByTagName("Id")[0]?.textContent; const t0=new Date(id);
+  let sec=0, dist=0, hrSum=0, maxHr=0, kcal=0;
+  for (const lap of act.getElementsByTagName("Lap")){
+    const g = n => lap.getElementsByTagName(n)[0];
+    const s=+(g("TotalTimeSeconds")?.textContent||0); sec+=s; dist+=+(g("DistanceMeters")?.textContent||0); kcal+=+(g("Calories")?.textContent||0);
+    const ah=g("AverageHeartRateBpm"); if(ah) hrSum+=(+ah.textContent.trim())*s;
+    const mh=g("MaximumHeartRateBpm"); if(mh) maxHr=Math.max(maxHr,+mh.textContent.trim());
+  }
+  return { id:"tcx-"+(t0/1000|0), start:+t0, kind:kindFromText(act.getAttribute("Sport")), durationSec:sec, distanceM:dist, avgHr: hrSum&&sec?Math.round(hrSum/sec):null, maxHr:maxHr||null, kcal:kcal||null, sets:[] };
+}
+async function unzip(buf){
+  const dv=new DataView(buf); let e=buf.byteLength-22;
+  while (e>=0 && dv.getUint32(e,true)!==0x06054b50) e--;
+  if (e<0) throw new Error("ZIP defekt");
+  const n=dv.getUint16(e+10,true); let p=dv.getUint32(e+16,true); const out=[];
+  for (let i=0;i<n;i++){
+    const method=dv.getUint16(p+10,true), csize=dv.getUint32(p+20,true), nl=dv.getUint16(p+28,true), xl=dv.getUint16(p+30,true), cl=dv.getUint16(p+32,true), lho=dv.getUint32(p+42,true);
+    const name=new TextDecoder().decode(new Uint8Array(buf,p+46,nl)); p+=46+nl+xl+cl;
+    if (name.endsWith("/")) continue;
+    const ds=lho+30+dv.getUint16(lho+26,true)+dv.getUint16(lho+28,true);
+    const raw=buf.slice(ds,ds+csize);
+    let data;
+    if (method===0) data=raw;
+    else if (method===8){
+      if (window.DecompressionStream) data = await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer();
+      else if (window.JSZip){ const z=await JSZip.loadAsync(buf); data=await z.file(name).async("arraybuffer"); }
+      else throw new Error("ZIP wird von diesem Browser nicht unterstützt – bitte die .fit direkt wählen");
+    } else continue;
+    out.push({name,data});
+  }
+  return out;
+}
+async function parseActivityFile(name, data){
+  const n = name.toLowerCase();
+  if (n.endsWith(".zip")){
+    const out=[];
+    for (const f of await unzip(data)){ if (!/\.(fit|gpx|tcx)$/i.test(f.name)) continue;
+      out.push(...await parseActivityFile(f.name, f.data)); }
+    if (!out.length) throw new Error("Keine FIT/GPX/TCX im ZIP");
+    return out;
+  }
+  if (n.endsWith(".fit")) return [parseFIT(data)];
+  const txt = new TextDecoder().decode(data);
+  if (n.endsWith(".gpx")) return [parseGPX(txt)];
+  if (n.endsWith(".tcx")) return [parseTCX(txt)];
+  throw new Error("Dateityp nicht unterstützt");
+}
+const KIND_L = {run:"Laufen",bike:"Radfahren",swim:"Schwimmen",strength:"Krafttraining",walk:"Gehen/Wandern",row:"Rudern",hybrid:"Training",other:"Aktivität"};
+const KIND_T = {run:"run",bike:"bike",swim:"swim",strength:"strength",walk:"mobility",row:"hybrid",hybrid:"hybrid",other:"hybrid"};
+const fmtDur = s => { s=Math.round(s); const h=s/3600|0, m=(s%3600)/60|0, ss=s%60; return h?`${h}:${pad(m)}:${pad(ss)}`:`${m}:${pad(ss)}`; };
+const fmtPace = a => { if(!a.distanceM||!a.durationSec) return ""; if(a.kind==="bike") return (a.distanceM/1000/(a.durationSec/3600)).toFixed(1)+" km/h"; if(a.kind==="swim") return fmtDur(a.durationSec/(a.distanceM/100))+" /100 m"; return fmtDur(a.durationSec/(a.distanceM/1000))+" /km"; };
+
+function applyActivity(a){
+  S.imported = S.imported || [];
+  if (S.imported.includes(a.id) || Object.values(S.logs).some(l=>(l.activities||[]).some(x=>x.id===a.id || Math.abs(x.start-a.start)<120000))) { S.imported.push(a.id); return {status:"dup"}; }
+  const date = iso(new Date(a.start));
+  const day = dayById(date);
+  let log = S.logs[date];
+  if (!log){
+    log = day && day.type!=="rest" ? newLog(day) : { date, title:KIND_L[a.kind], type:KIND_T[a.kind], done:false, rpe:null, note:"", duration:"", items:[] };
+    S.logs[date] = log;
+  }
+  const km = Math.round(a.distanceM/10)/100, min = Math.round(a.durationSec/60);
+  if (a.kind!=="strength" && a.distanceM>0){
+    let it = log.items.find(i=>i.kind==="cardio" && !num(i.distance));
+    if (!it){ it={name:KIND_L[a.kind],kind:"cardio",distance:"",time:"",done:false}; log.items.push(it); }
+    it.distance = km; it.time = min; it.done = true;
+  }
+  if (a.sets?.length){
+    const used = new Set();
+    const groups = {};
+    a.sets.forEach(s=>{ const k=s.cat||"other"; (groups[k]=groups[k]||[]).push(s); });
+    for (const [cat, ss] of Object.entries(groups)){
+      const re = CAT_MATCH[cat];
+      let it = re ? log.items.find((i,ix)=>i.kind==="strength" && !used.has(ix) && re.test(i.name)) : null;
+      if (!it){ it = {name: CAT_DE[cat] || "Übung", kind:"strength", sets:[]}; log.items.push(it); }
+      used.add(log.items.indexOf(it));
+      it.sets = ss.map(s=>({reps: s.reps ?? "", kg: s.kg ?? "", done:true}));
+    }
+  }
+  if (log.items.length && log.items.every(i=>i.kind==="strength") && !a.sets?.length && a.kind==="strength"){
+    // strength workout without set data: mark planned sets as done
+    log.items.forEach(i=>i.sets.forEach(s=>s.done=true));
+  }
+  log.activities = [...(log.activities||[]), {id:a.id, kind:a.kind, start:a.start, km, durationSec:Math.round(a.durationSec), avgHr:a.avgHr, maxHr:a.maxHr, kcal:a.kcal, pace:fmtPace(a), sets:a.sets?.length||0}];
+  const actMin = Math.round(log.activities.reduce((t,x)=>t+x.durationSec,0)/60); if (actMin) log.duration = actMin;
+  if (!log.done){ log.done = true; log.finishedAt = Date.now(); }
+  log.review = null;
+  S.imported.push(a.id); S.imported = S.imported.slice(-500);
+  return {status:"ok", date, matched: !!(day && day.type!=="rest"), title: log.title};
+}
+async function importFiles(files){
+  let ok=0, dup=0, err=[], last=null;
+  for (const f of files){
+    try{
+      const acts = await parseActivityFile(f.name, await f.arrayBuffer());
+      for (const a of acts){ const r = applyActivity(a); if (r.status==="ok"){ ok++; last=r; } else dup++; }
+    }catch(e){ console.error(e); err.push(f.name+": "+e.message); }
+  }
+  save("logs"); save("imported");
+  sheet=null;
+  if (last){ selDate = last.date; tab = S.plan?.days.some(d=>d.date===last.date) ? "heute" : "fortschritt"; }
+  render();
+  toast(ok ? `${ok} Garmin-Aktivität${ok>1?"en":""} importiert${dup?`, ${dup} schon vorhanden`:""} ✔` : err.length ? "Import fehlgeschlagen: "+err[0] : "Schon importiert");
+}
+
+/* ============ intervals.icu (Live-Garmin) ============ */
+const ICU = "https://intervals.icu/api/v1";
+const icuOn = () => !!S.conn.icuKey;
+async function icu(path, opts={}){
+  let r;
+  try{
+    r = await fetch(ICU+path.replace("{id}", encodeURIComponent(S.conn.icuId||"0")), { ...opts, headers:{ "Authorization":"Basic "+btoa("API_KEY:"+S.conn.icuKey.trim()), ...(opts.body?{"Content-Type":"application/json"}:{}), ...(opts.headers||{}) } });
+  }catch(e){ throw new Error("intervals.icu nicht erreichbar (Internet?)"); }
+  if (r.status===401||r.status===403) throw new Error("intervals.icu: API-Schlüssel oder Athleten-ID falsch");
+  if (!r.ok) throw new Error("intervals.icu Fehler "+r.status);
+  if (opts.raw) return r;
+  const t = await r.text(); try{ return t ? JSON.parse(t) : null; }catch(e){ return null; }
+}
+const ICU_KIND = t => { t=t||""; if(/Run/.test(t)) return "run"; if(/Ride|Cycl/.test(t)) return "bike"; if(/Swim/.test(t)) return "swim"; if(/Weight|Strength/.test(t)) return "strength"; if(/Walk|Hike/.test(t)) return "walk"; if(/Row/.test(t)) return "row"; return "hybrid"; };
+const ICU_TYPE = {brick:"Ride",strength:"WeightTraining",run:"Run",bike:"Ride",swim:"Swim",hyrox:"Workout",hybrid:"Workout",mobility:"Yoga"};
+async function gunzipMaybe(buf){
+  const u = new Uint8Array(buf, 0, 2);
+  if (u[0]===0x1f && u[1]===0x8b && window.DecompressionStream) return new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer();
+  return buf;
+}
+let syncing=false;
+async function syncGarmin(manual){
+  if (!icuOn() || syncing) return;
+  syncing=true; busy.sync=true; if(manual) render();
+  let added=[];
+  try{
+    const oldest = iso(addDays(new Date(), manual? -42 : -21));
+    const acts = await icu(`/athlete/{id}/activities?oldest=${oldest}&newest=${today()}`);
+    let stravaOnly = 0;
+    for (const a of (acts||[]).sort((x,y)=>String(x.start_date_local).localeCompare(String(y.start_date_local)))){
+      if (!a.start_date_local || (!a.moving_time && !a.elapsed_time)){ if (a.source==="STRAVA") stravaOnly++; continue; }
+      const id = "icu-"+a.id;
+      if ((S.imported||[]).includes(id)) continue;
+      const act = { id, start: Date.parse(a.start_date_local), kind: ICU_KIND(a.type), durationSec: a.moving_time||a.elapsed_time||0, distanceM: a.distance||0,
+        avgHr: a.average_heartrate?Math.round(a.average_heartrate):null, maxHr: a.max_heartrate?Math.round(a.max_heartrate):null, kcal: a.calories||null, sets: [] };
+      if (act.kind==="strength"){
+        try{ const r = await icu(`/activity/${encodeURIComponent(a.id)}/file`, {raw:true}); const fit = parseFIT(await gunzipMaybe(await r.arrayBuffer())); act.sets = fit.sets||[]; }catch(e){ console.warn("FIT", e); }
+      }
+      const res = applyActivity(act);
+      if (res.status==="ok") added.push({res, act});
+    }
+    S.conn.lastSync = Date.now(); S.conn.lastError = ""; save("conn");
+    if (added.length){ save("logs"); save("imported");
+      const l = added[added.length-1];
+      toast(added.length===1 ? `Garmin: ${KIND_L[l.act.kind]}${l.act.distanceM?" "+(Math.round(l.act.distanceM/100)/10)+" km":""} übernommen ✔` : `${added.length} neue Garmin-Aktivitäten übernommen ✔`);
+    } else if (manual) toast(stravaOnly ? "Achtung: Aktivitäten kommen über Strava – bitte Garmin direkt mit intervals.icu verbinden" : "Alles aktuell ✔");
+  }catch(e){ S.conn.lastError = e.message; save("conn"); if (manual) toast(e.message); }
+  syncing=false; busy.sync=false; render();
+}
+function garminDesc(d){
+  const lines=[];
+  if (d.garmin && ["run","bike","swim","brick"].includes(d.type)) lines.push(d.garmin.trim(), "");
+  else if (["run","bike","swim"].includes(d.type) && d.durationMin) lines.push(`- ${d.durationMin}m ${d.intensity==="hart"?"Z3":"Z2"} HR`, "");
+  if (d.notes) lines.push(d.notes);
+  for (const it of d.items){
+    if (it.kind==="strength") lines.push(`${it.name}: ${it.sets}×${it.reps}${it.load?" @ "+it.load:""}${it.notes?" ("+it.notes+")":""}`);
+    else if (!d.garmin) lines.push(`${it.name}${it.target?": "+it.target:""}`);
+  }
+  lines.push("", "Geplant mit TriCoach");
+  return lines.join("\n");
+}
+async function pushPlan(plan, manual){
+  if (!icuOn() || !plan) return;
+  busy.push=true; if(manual) render();
+  try{
+    const events = plan.days.filter(d=>d.type!=="rest").map(d=>({ category:"WORKOUT", start_date_local:d.date+"T00:00:00", type: ICU_TYPE[d.type]||"Workout",
+      name: d.title, description: garminDesc(d), moving_time: d.durationMin? d.durationMin*60 : undefined, external_id:"hybridcoach-"+d.date }));
+    if (events.length) await icu(`/athlete/{id}/events/bulk?upsert=true`, { method:"POST", body: JSON.stringify(events) });
+    // remove old TriCoach workouts on days that are now rest days
+    const end = iso(addDays(parseD(plan.start),6));
+    const existing = await icu(`/athlete/{id}/events?oldest=${plan.start}&newest=${end}&category=WORKOUT`);
+    const restDates = new Set(plan.days.filter(d=>d.type==="rest").map(d=>d.date));
+    for (const ev of existing||[]) if (String(ev.external_id||"").startsWith("hybridcoach-") && restDates.has(String(ev.start_date_local).slice(0,10)))
+      await icu(`/athlete/{id}/events/${ev.id}`, { method:"DELETE" });
+    plan.pushedAt = Date.now(); save(plan===S.plan?"plan":"nextPlan");
+    if (manual) toast("Plan an Garmin gesendet ✔ – Uhr synchronisieren");
+  }catch(e){ S.conn.lastError = e.message; save("conn"); toast("Senden an Garmin fehlgeschlagen: "+e.message); }
+  busy.push=false; render();
+}
+const autoPush = plan => { if (icuOn() && S.conn.autoPush) pushPlan(plan); };
+
+/* ============ UI state ============ */
+let tab = (location.hash||"").slice(1) || "heute";
+if (!["heute","woche","coach","fortschritt","saison"].includes(tab)) tab="heute";
+let selDate = today();
+let busy = {};
+let sheet = null;
+
+const ICON = {
+  heute:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/></svg>',
+  woche:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  coach:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9 11h.01M12 11h.01M15 11h.01"/></svg>',
+  fortschritt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M6 16l4-5 3 3 6-7"/></svg>',
+  saison:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>',
+  watch:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="3"/><path d="M9 6l1-3h4l1 3M9 18l1 3h4l1-3M12 10v2l1.5 1"/></svg>',
+  upload:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>',
+  user:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
+  check:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>',
+  x:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  spark:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>'
+};
+const LOGO = '<svg viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1c1f1c"/><path d="M15 17h34M32 17v28" stroke="#3fd35f" stroke-width="7" stroke-linecap="round" fill="none"/><path d="M15 54h8" stroke="#3ee0c6" stroke-width="5" stroke-linecap="round"/><path d="M28 54h8" stroke="#b48cff" stroke-width="5" stroke-linecap="round"/><path d="M41 54h8" stroke="#5cc8ff" stroke-width="5" stroke-linecap="round"/></svg>';
+
+function setTab(t){ tab=t; try{ history.replaceState(null,"","#"+t); }catch(e){ location.hash=t; } render(); window.scrollTo(0,0); }
+window.addEventListener("hashchange",()=>{ const t=location.hash.slice(1); if(t&&t!==tab&&ICON[t]){ tab=t; render(); } });
+
+function renderTabs(){
+  const L = {heute:"Heute",woche:"Woche",coach:"Coach",fortschritt:"Fortschritt",saison:"Saison"};
+  $("#tabs .in").innerHTML = Object.keys(L).map(k=>`<button class="${tab===k?"on":""}" data-tab="${k}">${ICON[k]}${L[k]}</button>`).join("");
+  $("#tabs").style.display = S.profile.onboarded && !ivOn() ? "" : "none";
+}
+
+/* ============ views ============ */
+function render(){
+  renderTabs();
+  const a = $("#app");
+  if (!S.profile.onboarded){ a.innerHTML = viewOnboarding(); return; }
+  if (ivOn()){ a.innerHTML = viewInterview(); const ie=$("#ivEnd"); if (ie) ie.scrollIntoView({block:"end"}); return; }
+  ensureCurrentWeek();
+  const head = `<header class="top"><div class="brand">${LOGO}TriCoach</div><div class="row" style="gap:8px"><button class="iconbtn" data-act="garmin" aria-label="Verbindungen" style="position:relative">${ICON.watch}${icuOn()?`<span class="dot" style="position:absolute;top:6px;right:6px;background:${S.conn.lastError?"var(--warn)":"var(--ok)"}"></span>`:""}</button><button class="iconbtn" data-act="profile" aria-label="Profil">${ICON.user}</button></div></header>`;
+  const v = {heute:viewToday, woche:viewWeek, coach:viewCoach, fortschritt:viewProgress, saison:viewSeason}[tab]();
+  a.innerHTML = head + v + (sheet ? sheet() : "");
+  if (tab==="coach"){ const c=$("#chatEnd"); if(c) c.scrollIntoView({block:"end"}); }
+}
+
+function ensureCurrentWeek(){
+  if (S.plan){
+    const cur = iso(monday(new Date()));
+    if (S.plan.start < cur){
+      S.history.push(S.plan); S.history = S.history.slice(-26); S.plan = null; save("history");
+      if (S.nextPlan && S.nextPlan.start===cur){ S.plan=S.nextPlan; S.nextPlan=null; save("nextPlan"); }
+      save("plan");
+    }
+  }
+}
+
+const SPORTS = [["strength","Kraft"],["run","Laufen"],["bike","Rad"],["swim","Schwimmen"],["triathlon","Triathlon"],["hyrox","Hyrox"],["mobility","Mobility"]];
+function toggleSport(arr, k){ const i=arr.indexOf(k); if (i<0){ arr.push(k); if (k==="triathlon") for (const x of ["swim","bike","run"]) if(!arr.includes(x)) arr.push(x); } else arr.splice(i,1); }
+/* onboarding */
+let ob = null;
+function viewOnboarding(){
+  ob = ob || structuredClone(S.profile);
+  const sp = SPORTS;
+  return `
+  <div style="padding-top:20px">
+    <div class="brand" style="margin-bottom:26px">${LOGO}TriCoach</div>
+    <h1>Dein KI-Coach für<br><span style="color:var(--accent)">Triathlon & Kraft</span></h1>
+    <p class="mute">Erzähl mir kurz von dir. Daraus baue ich deine erste Trainingswoche.</p>
+    <div class="card">
+      <label class="f">Dein Name</label>
+      <input class="i" data-ob="name" value="${esc(ob.name)}" placeholder="Dein Vorname">
+      <label class="f">Was willst du erreichen?</label>
+      <textarea class="i" data-ob="goals" placeholder="z. B. Mitteldistanz-Triathlon finishen, 5 km unter 22 min">${esc(ob.goals)}</textarea>
+      <label class="f">Sportarten</label>
+      <div class="chips">${sp.map(([k,l])=>`<button class="chip ${ob.sports.includes(k)?"on":""}" data-obsport="${k}">${l}</button>`).join("")}</div>
+      <label class="f">Erfahrung</label>
+      <div class="chips">${["Einsteiger","mittel","fortgeschritten"].map(l=>`<button class="chip ${ob.level===l?"on":""}" data-oblevel="${l}">${l[0].toUpperCase()+l.slice(1)}</button>`).join("")}</div>
+      <p class="dim small" style="margin:14px 0 0">Wie viele Tage du trainierst und wie lange die Einheiten dauern, legt dein Coach nach dem Gespräch selbst fest.</p>
+      <label class="f">Ausstattung</label>
+      <input class="i" data-ob="equipment" value="${esc(ob.equipment)}" placeholder="Fitnessstudio, Home Gym, nur Kurzhanteln …">
+      <label class="f">Verletzungen / Einschränkungen</label>
+      <input class="i" data-ob="limitations" value="${esc(ob.limitations)}" placeholder="optional">
+      <label class="f">Google-KI-Schlüssel für den Coach (gratis, optional)</label>
+      <input class="i" data-ob="gemKey" type="password" autocomplete="off" value="${esc(ob.gemKey||S.conn.gemKey)}" placeholder="AIza… – ohne Schlüssel kein Coach-Gespräch, nur Standardplan">
+      <a class="small" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:var(--accent);display:inline-block;margin-top:6px">Kostenlosen Schlüssel bei Google holen →</a>
+    </div>
+    <button class="btn block" data-act="finishOnboarding" ${busy.ob?"disabled":""}>${busy.ob?'<span class="spinner"></span> Coach plant deine Woche …':"Weiter zum Coach-Gespräch"}</button>
+    <p class="dim small" style="text-align:center;margin-top:10px">Als Nächstes führt dich dein Coach durch ein kurzes Gespräch (ca. 5 Minuten). Erst danach baut er deinen Plan. Deine Daten bleiben auf deinem Gerät.</p>
+  </div>`;
+}
+
+/* today */
+function viewToday(){
+  if (!S.plan) return noPlan();
+  let d = S.plan.days.find(x=>x.date===selDate);
+  if (!d){ d = S.plan.days.find(x=>x.date===today()) || S.plan.days[0]; selDate = d.date; }
+  const strip = `<div class="strip">${S.plan.days.map((x,i)=>{ const dd=parseD(x.date); const done=S.logs[x.date]?.done;
+    return `<button class="${x.date===d.date?"sel":""}" data-sel="${x.date}"><span class="d">${DOW[i]}</span><span class="n" style="${x.date===today()?"color:var(--accent)":""}">${dd.getDate()}</span><span class="st" style="background:${done?"var(--ok)":T(x.type).c};opacity:${x.type==="rest"?.4:1}"></span></button>`; }).join("")}</div>`;
+  return `<div class="row between" style="margin-bottom:12px"><div><div class="mute small">${S.plan.phase?esc(S.plan.phase)+" · ":""}${esc(S.plan.focus)}</div><h1>${d.date===today()?"Heute":esc(fmtD(d.date).split(",")[0])}</h1></div></div>` + strip + workoutView(d);
+}
+function noPlan(){
+  return `<div class="card empty">${ICON.woche.replace("<svg","<svg")}<h2 style="margin-top:6px">Noch kein Plan für diese Woche</h2><p class="mute">Der Coach plant deine Woche anhand deiner Ziele, Wettkämpfe und letzten Trainings.</p>
+  <button class="btn block" data-act="genWeek" ${busy.gen?"disabled":""}>${busy.gen?'<span class="spinner"></span> Plane …':ICON.spark+(needIv()?" Mit Coach-Gespräch starten":" Woche planen")}</button></div>`;
+}
+function workoutView(d){
+  const log = S.logs[d.date];
+  const t = T(d.type);
+  if (d.type==="rest") return `<div class="hero"><div class="type" style="color:${t.c === "var(--rest)" ? "var(--mute)" : t.c}">Ruhetag</div><h2 style="margin:8px 0 4px">${esc(d.title)}</h2><p class="mute" style="margin:0">${esc(d.notes||"Erholung ist Training. Schlaf, Essen, locker bewegen.")}</p></div>
+    <button class="btn ghost block" data-act="askSwap" data-date="${d.date}">Doch trainieren? Coach fragen</button>`;
+  let h = `<div class="hero">
+    <div class="row between"><span class="type" style="color:${t.c}">${t.l}</span>${log?.done?`<span class="tag" style="color:var(--ok);border-color:#2f5a35">${ICON.check} Erledigt</span>`:""}</div>
+    <h2 style="margin:8px 0 6px;font-size:28px">${esc(d.title)}</h2>
+    <div class="kv">${d.durationMin?`<span><b>${d.durationMin}</b> min</span>`:""}${d.intensity?`<span>Intensität <b>${esc(d.intensity)}</b></span>`:""}<span><b>${d.items.length}</b> Übungen</span></div>
+    ${d.notes?`<p class="mute small" style="margin:10px 0 0">${esc(d.notes)}</p>`:""}
+  </div>`;
+  if (log && !log.done || (log && log.editing)) return h + logView(d, log);
+  h += `<div class="card">${d.items.map(it=>`<div class="item"><div class="nm">${esc(it.name)}</div><div class="kv">
+      ${it.kind==="strength"?`<span><b>${it.sets}</b> × <b>${esc(it.reps)}</b></span>${it.load?`<span><b>${esc(it.load)}</b></span>`:""}`:""}
+      ${it.target?`<span><b>${esc(it.target)}</b></span>`:""}${it.kind==="cardio"&&it.reps?`<span><b>${esc(it.reps)}</b></span>`:""}</div>
+      ${it.notes?`<div class="dim small" style="margin-top:3px">${esc(it.notes)}</div>`:""}</div>`).join("") || '<div class="mute">Keine Details.</div>'}</div>`;
+  if (log?.done){
+    h += `<div class="card"><div class="row between"><h3>Dein Ergebnis</h3><button class="btn ghost sm" data-act="editLog" data-date="${d.date}">Bearbeiten</button></div>
+      <div class="kv" style="margin-top:6px"><span>RPE <b>${log.rpe||"–"}</b></span>${log.duration?`<span><b>${log.duration}</b> min</span>`:""}<span>Ausführung <b>${execScore(d,log)}%</b></span></div>
+      ${(log.activities||[]).map(actRow).join("")}
+      ${log.note?`<p class="mute small">${esc(log.note)}</p>`:""}
+      ${log.review?`<div class="review" style="margin-top:10px">${esc(log.review)}</div>`:`<button class="btn ghost block" style="margin-top:12px" data-act="review" data-date="${d.date}" ${busy.review?"disabled":""}>${busy.review?'<span class="spinner"></span> Coach analysiert …':ICON.spark+" Coach-Feedback holen"}</button>`}</div>`;
+  } else {
+    h += `<button class="btn block" data-act="startLog" data-date="${d.date}">Training starten</button>
+      ${icuOn()?`<button class="btn ghost block" style="margin-top:8px" data-act="syncNow" ${busy.sync?"disabled":""}>${busy.sync?'<span class="spinner"></span>':ICON.watch} Garmin wird automatisch übernommen · ${ago(S.conn.lastSync)}</button>`
+        :`<button class="btn ghost block" style="margin-top:8px" data-act="garmin">${ICON.watch} Garmin-Uhr verbinden</button>`}
+      ${icuOn()&&S.plan?.pushedAt?`<p class="dim small" style="text-align:center;margin:6px 0 0">Dieses Workout ist auf deiner Uhr unter „Trainingskalender“.</p>`:""}
+      <div class="row" style="margin-top:10px;gap:8px"><button class="btn ghost grow sm" data-act="quickAdjust" data-date="${d.date}" data-q="Ich habe heute nur 30 Minuten.">Nur 30 min</button><button class="btn ghost grow sm" data-act="quickAdjust" data-date="${d.date}" data-q="Ich fühle mich heute müde, bitte leichter machen.">Bin müde</button><button class="btn ghost grow sm" data-act="quickAdjust" data-date="${d.date}" data-q="Ich habe heute kein Fitnessstudio zur Verfügung.">Kein Gym</button></div>`;
+  }
+  return h;
+}
+function execScore(d,log){
+  let planned=0, done=0;
+  d.items.forEach((it,i)=>{ const li=log.items?.[i]; if(!li) return;
+    if (it.kind==="strength"){ planned+=it.sets; done+=(li.sets||[]).filter(s=>s.done).length; }
+    else { planned+=1; if(li.done||num(li.distance)||num(li.time)) done+=1; } });
+  return planned?Math.min(100,Math.round(done/planned*100)):100;
+}
+function logView(d, log){
+  return `<div class="card">${log.items.map((it,i)=>{
+    if (it.kind==="strength") return `<div class="item"><div class="row between"><div class="nm">${esc(it.name)}</div><span class="dim small">Plan: ${d.items[i]?.sets}×${esc(d.items[i]?.reps)} ${esc(d.items[i]?.load)}</span></div>
+      <div class="setgrid"><span class="h">Satz</span><span class="h">Wdh.</span><span class="h">kg</span><span></span>
+      ${it.sets.map((s,j)=>`<span class="dim" style="text-align:center">${j+1}</span><input inputmode="decimal" value="${esc(s.reps)}" data-lg="${i}.${j}.reps"><input inputmode="decimal" value="${esc(s.kg)}" data-lg="${i}.${j}.kg"><button class="chk ${s.done?"on":""}" data-setdone="${i}.${j}">${ICON.check}</button>`).join("")}
+      </div><div class="row" style="gap:6px;margin-top:6px"><button class="btn ghost sm" data-addset="${i}">+ Satz</button>${it.sets.length>1?`<button class="btn ghost sm" data-rmset="${i}">− Satz</button>`:""}</div></div>`;
+    return `<div class="item"><div class="row between"><div class="nm">${esc(it.name)}</div><button class="chk ${it.done?"on":""}" data-cdone="${i}">${ICON.check}</button></div>
+      ${d.items[i]?.target?`<div class="dim small">Ziel: ${esc(d.items[i].target)}</div>`:""}
+      <div class="grid2" style="margin:8px 0 0"><div><label class="f" style="margin-top:0">Distanz (km)</label><input class="i" inputmode="decimal" value="${esc(it.distance)}" data-lc="${i}.distance"></div><div><label class="f" style="margin-top:0">Zeit (min)</label><input class="i" inputmode="decimal" value="${esc(it.time)}" data-lc="${i}.time"></div></div></div>`;
+  }).join("")}
+  <div class="item"><button class="btn ghost sm" data-act="addExercise" data-date="${d.date}">+ Übung hinzufügen</button></div></div>
+  <div class="card"><h3>Abschluss</h3>
+    <label class="f">Wie hart war's? (RPE 1–10)</label>
+    <div class="chips">${[5,6,7,8,9,10].map(n=>`<button class="chip ${+log.rpe===n?"on":""}" data-rpe="${n}">${n}</button>`).join("")}</div>
+    <label class="f">Dauer gesamt (min)</label><input class="i" inputmode="numeric" value="${esc(log.duration||d.durationMin||"")}" data-lf="duration">
+    <label class="f">Notiz für den Coach</label><textarea class="i" data-lf="note" placeholder="Wie lief's? Schmerzen? Zu leicht?">${esc(log.note)}</textarea>
+  </div>
+  <button class="btn block" data-act="finishLog" data-date="${d.date}">${ICON.check} Training abschließen</button>
+  <button class="btn ghost block" style="margin-top:8px" data-act="cancelLog" data-date="${d.date}">Abbrechen</button>`;
+}
+
+/* week */
+function viewWeek(){
+  if (!S.plan) return `<h1 style="margin-bottom:14px">Woche</h1>` + noPlan();
+  const doneN = S.plan.days.filter(d=>d.type!=="rest"&&S.logs[d.date]?.done).length, tot = S.plan.days.filter(d=>d.type!=="rest").length;
+  const nextStart = addDays(parseD(S.plan.start),7);
+  return `<div class="row between" style="margin-bottom:6px"><h1>Woche</h1><span class="tag">${parseD(S.plan.start).getDate()}. ${MON[parseD(S.plan.start).getMonth()]} – ${addDays(parseD(S.plan.start),6).getDate()}. ${MON[addDays(parseD(S.plan.start),6).getMonth()]}</span></div>
+  <p class="mute" style="margin:0 0 12px">${S.plan.phase?`<b style="color:var(--text)">${esc(S.plan.phase)}</b> · `:""}${esc(S.plan.focus)}</p>
+  <div class="card tight"><div class="row between small"><span class="mute">Fortschritt diese Woche</span><b>${doneN}/${tot}</b></div><div class="progress" style="margin-top:8px"><div style="width:${tot?doneN/tot*100:0}%"></div></div></div>
+  ${S.plan.days.map((d,i)=>{ const t=T(d.type); const done=S.logs[d.date]?.done;
+    return `<div class="card tight" style="cursor:pointer;${d.date===today()?"border-color:var(--accent)":""}" data-open="${d.date}"><div class="row">
+      <div style="width:42px;text-align:center"><div class="dim small" style="font-weight:600">${DOW[i]}</div><div style="font:700 22px/1 'Barlow Condensed'">${parseD(d.date).getDate()}</div></div>
+      <span class="dot" style="background:${t.c};width:4px;height:36px;border-radius:2px"></span>
+      <div class="grow"><div style="font-weight:700">${esc(d.title)}</div><div class="dim small">${t.l}${d.durationMin&&d.type!=="rest"?" · "+d.durationMin+" min":""}${d.intensity&&d.type!=="rest"?" · "+esc(d.intensity):""}</div></div>
+      ${done?`<span style="color:var(--ok)">${ICON.check}</span>`:""}
+    </div></div>`; }).join("")}
+  <h2>Woche anpassen</h2>
+  <div class="card"><textarea class="i" id="weekWish" placeholder="z. B. Mittwoch habe ich keine Zeit, mehr Laufvolumen, Samstag lange Radausfahrt …"></textarea>
+  <button class="btn block" style="margin-top:10px" data-act="regenWeek" ${busy.gen?"disabled":""}>${busy.gen?'<span class="spinner"></span> Plane neu …':ICON.spark+" Woche neu planen"}</button></div>
+  <button class="btn ghost block" data-act="planNext" ${busy.gen?"disabled":""}>Nächste Woche vorplanen (ab ${nextStart.getDate()}. ${MON[nextStart.getMonth()]})</button>
+  ${S.nextPlan?`<p class="mute small" style="text-align:center">Nächste Woche ist vorgeplant und startet automatisch.</p>`:""}`;
+}
+
+/* coach chat */
+function viewCoach(){
+  const msgs = S.chat.slice(-40);
+  const intro = `Hey${S.profile.name?" "+esc(S.profile.name):""}! Ich bin dein Coach. Frag mich alles zu deinem Training, oder sag mir, was ich an deinem Plan ändern soll – ich passe ihn direkt an.`;
+  const quick = ["Ich habe ein Training verpasst","Diese Woche nur 3 Tage Zeit","Mehr Laufen bitte","Wie teile ich die Mitteldistanz ein?","Erklär mir meinen Plan"];
+  return `<h1 style="margin-bottom:14px">Coach</h1>
+  ${!sample?`<div class="card small"><b>Coach noch nicht aktiv.</b> <span class="mute">Hol dir einen kostenlosen Google-KI-Schlüssel und trag ihn unter Verbindungen ein.</span><button class="btn sm" style="margin-top:10px" data-act="garmin">Verbindungen öffnen</button></div>`:""}
+  <div class="chat"><div class="msg a">${intro}</div>
+  ${msgs.map(m=>`<div class="msg ${m.role==="user"?"u":m.role==="sys"?"sys":"a"}">${esc(m.content)}</div>`).join("")}
+  ${busy.chat?`<div class="msg a"><span id="streamTxt">${esc(busy.chatText||"…")}</span></div>`:""}
+  <div id="chatEnd" style="height:70px"></div></div>
+  <div class="composer"><div class="quick">${quick.map(q=>`<button class="btn ghost sm" data-quick="${esc(q)}">${esc(q)}</button>`).join("")}</div>
+  <form class="in" id="chatForm"><input id="chatIn" placeholder="Nachricht an deinen Coach …" autocomplete="off" ${busy.chat?"disabled":""}><button class="btn sm" ${busy.chat?"disabled":""}>Senden</button></form></div>`;
+}
+
+/* progress */
+function viewProgress(){
+  const rms = oneRMs(); const ws = weekStats(8);
+  const done = Object.values(S.logs).filter(l=>l.done).length;
+  const maxT = Math.max(1,...ws.map(w=>w.ton)); const maxM = Math.max(1,...ws.map(w=>w.mins));
+  const hist = Object.values(S.logs).filter(l=>l.done).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,15);
+  return `<h1 style="margin-bottom:14px">Fortschritt</h1>
+  <div class="grid3"><div class="stat"><div class="v">${done}</div><div class="l">Einheiten</div></div><div class="stat"><div class="v">${consistency(28)}<span style="font-size:18px">%</span></div><div class="l">Konstanz 4 Wo.</div></div><div class="stat"><div class="v">${totalKm()}</div><div class="l">km Ausdauer</div></div></div>
+  <div class="card"><div class="row between"><h3>Trainingsvolumen Kraft</h3><span class="dim small">kg × Wdh. / Woche</span></div>
+    <div class="bars">${ws.map(w=>`<div class="b"><span class="vl">${w.ton?(w.ton>=1000?(w.ton/1000).toFixed(1)+"t":w.ton):""}</span><div class="bar ${w.cur?"cur":""}" style="height:${w.ton/maxT*85}%"></div><span class="lb">${w.label}</span></div>`).join("")}</div></div>
+  <div class="card"><div class="row between"><h3>Trainingszeit</h3><span class="dim small">Minuten / Woche</span></div>
+    <div class="bars">${ws.map(w=>`<div class="b"><span class="vl">${w.mins||""}</span><div class="bar ${w.cur?"cur":""}" style="height:${w.mins/maxM*85}%;background:${w.cur?"#a8e4ff":"var(--run)"}"></div><span class="lb">${w.label}</span></div>`).join("")}</div></div>
+  <div class="card"><h3>Geschätztes 1RM</h3><p class="dim small" style="margin:2px 0 8px">Aus deinen besten Sätzen (Epley-Formel, bis 12 Wdh.)</p>
+    ${rms.length?rms.slice(0,10).map(r=>{ const h=rmHistory(r.name); const first=h[0]?.rm; const diff = first&&h.length>1? r.rm-first:0;
+      return `<div class="rmrow"><div><div style="font-weight:600">${esc(r.name)}</div><div class="dim small">${r.kg} kg × ${r.reps} am ${parseD(r.date).getDate()}. ${MON[parseD(r.date).getMonth()]}</div></div><div style="text-align:right"><div class="v">${r.rm} kg</div>${diff>0?`<div class="small" style="color:var(--ok)">+${diff} kg</div>`:""}</div></div>`; }).join("")
+    :`<p class="mute">Sobald du Kraftsätze abhakst, erscheinen hier deine Werte.</p>`}</div>
+  <h2>Verlauf</h2>
+  ${hist.length?hist.map(l=>`<div class="card tight" data-openlog="${l.date}" style="cursor:pointer"><div class="row"><span class="dot" style="background:${T(l.type).c}"></span><div class="grow"><div style="font-weight:600">${esc(l.title)}</div><div class="dim small">${esc(fmtD(l.date))}${l.duration?" · "+l.duration+" min":""}${(l.activities||[]).filter(a=>a.km).map(a=>" · "+a.km+" km").join("")}${l.rpe?" · RPE "+l.rpe:""}</div></div>${l.activities?.length?`<span class="tag">${ICON.watch.replace('width="20" height="20"','width="13" height="13"')} Garmin</span>`:""}<div style="display:none"></div></div></div>`).join("")
+  :`<div class="card mute">Noch keine Einheiten abgeschlossen.</div>`}`;
+}
+
+/* season */
+function viewSeason(){
+  const ev = [...S.season.events].sort((a,b)=>a.date.localeCompare(b.date));
+  const up = ev.filter(e=>e.date>=today()), past = ev.filter(e=>e.date<today());
+  const main = up.find(e=>e.prio==="A") || up[0];
+  let phaseCard = "";
+  if (main){
+    const w = weeksUntil(main.date); const tot = Math.max(w,12);
+    const seg = [["Grundlage",Math.max(0,w-8),"var(--run)"],["Aufbau",Math.min(5,Math.max(0,w-3)),"var(--warn)"],["Peak",Math.min(2,Math.max(0,w-1)),"var(--accent)"],["Taper",Math.min(1,Math.max(0,w)),"var(--ok)"]];
+    const ph = phaseFor(main);
+    phaseCard = `<div class="hero"><div class="type" style="color:var(--accent)">Hauptziel</div><h2 style="margin:6px 0 2px;font-size:28px">${esc(main.name)}</h2>
+      <div class="mute">${esc(fmtD(main.date))} · ${esc(main.type)}</div>
+      <div class="row" style="margin-top:14px;gap:18px"><div><div style="font:800 40px/1 'Barlow Condensed'">${w}</div><div class="dim small">Wochen</div></div><div><div style="font:800 26px/1.2 'Barlow Condensed';color:${ph.c}">${ph.name}</div><div class="dim small">aktuelle Phase</div></div></div>
+      <div class="phasebar">${seg.filter(s=>s[1]>0).map(s=>`<div style="flex:${s[1]};background:${s[2]}"></div>`).join("")}</div>
+      <div class="row wrap small dim" style="gap:12px">${seg.filter(s=>s[1]>0).map(s=>`<span><span class="dot" style="background:${s[2]}"></span> ${s[0]} ${s[1]} Wo.</span>`).join("")}</div></div>`;
+  }
+  return `<div class="row between" style="margin-bottom:14px"><h1>Saison</h1><button class="btn sm" data-act="addEvent">+ Wettkampf</button></div>
+  ${phaseCard || `<div class="card empty">${ICON.saison}<h2 style="margin-top:4px">Noch kein Ziel</h2><p class="mute">Trag deinen nächsten Triathlon oder Lauf ein. Der Coach richtet die Phasen und Wochenpläne darauf aus.</p><button class="btn" data-act="addEvent">Wettkampf hinzufügen</button></div>`}
+  ${up.length?`<h2>Kommende Wettkämpfe</h2>`+up.map(e=>eventRow(e)).join(""):""}
+  ${past.length?`<h2>Vergangen</h2>`+past.reverse().map(e=>eventRow(e,true)).join(""):""}
+  ${main?`<button class="btn ghost block" style="margin-top:10px" data-act="seasonPlan" ${busy.season?"disabled":""}>${busy.season?'<span class="spinner"></span> Coach plant …':ICON.spark+" Saisonplan vom Coach erklären lassen"}</button>`:""}
+  ${S.season.overview?`<div class="card" style="margin-top:12px"><h3>Saisonplan</h3><div class="review" style="margin-top:8px">${esc(S.season.overview)}</div></div>`:""}`;
+}
+function eventRow(e,past){
+  const ph = phaseFor(e);
+  return `<div class="card tight"><div class="row"><div class="grow"><div class="row" style="gap:8px"><b>${esc(e.name)}</b><span class="tag">${esc(e.prio||"A")}</span></div><div class="dim small">${esc(fmtD(e.date))} · ${esc(e.type)}${e.goal?" · Ziel: "+esc(e.goal):""}</div></div>
+  ${past?"":`<span class="small" style="color:${ph.c};font-weight:700">${weeksUntil(e.date)} Wo.</span>`}<button class="del" data-delev="${e.id}">${ICON.x}</button></div></div>`;
+}
+
+/* sheets */
+function profileSheet(){
+  const p=S.profile;
+  return `<div class="overlay" data-close="1"><div class="sheet">
+    <div class="row between"><h2 style="margin:0">Profil</h2><button class="iconbtn" data-act="closeSheet">${ICON.x}</button></div>
+    <label class="f">Name</label><input class="i" data-pf="name" value="${esc(p.name)}">
+    <label class="f">Ziele</label><textarea class="i" data-pf="goals">${esc(p.goals)}</textarea>
+    <label class="f">Sportarten</label>
+    <div class="chips">${SPORTS.map(([k,l])=>`<button class="chip ${p.sports.includes(k)?"on":""}" data-pfsport="${k}">${l}</button>`).join("")}</div>
+    <p class="dim small" style="margin:6px 0 0">Nach einer Änderung unter „Woche“ → „Woche neu planen“ tippen.</p>
+    
+    <label class="f">Ausstattung</label><input class="i" data-pf="equipment" value="${esc(p.equipment)}">
+    <label class="f">Einschränkungen</label><input class="i" data-pf="limitations" value="${esc(p.limitations)}">
+    <button class="btn block" style="margin-top:16px" data-act="saveProfile">Speichern</button>
+    <h3 style="margin-top:24px">Coach-Gespräch</h3>
+    <p class="mute small">${S.interview.done?"Dein Coach kennt dich aus dem Erstgespräch.":"Du hast noch kein Erstgespräch geführt."} Du kannst es jederzeit neu führen, wenn sich etwas Wichtiges ändert (Ziel, Verletzung, Alltag). Danach wird die Woche neu geplant.</p>
+    ${S.interview.summary?`<details class="card tight" style="margin-bottom:10px"><summary class="small" style="cursor:pointer;font-weight:600">Das weiß dein Coach über dich</summary><div class="review" style="margin-top:8px">${esc(S.interview.summary)}</div></details>`:""}
+    <button class="btn ghost block" data-act="ivRestart" ${sample?"":"disabled"}>Coach-Gespräch ${S.interview.done?"neu ":""}starten</button>
+    <h3 style="margin-top:24px">Auf den Startbildschirm</h3>
+    <p class="mute small">Android/Chrome: Menü <b>⋮</b> → <b>Zum Startbildschirm hinzufügen</b>. Dann startet TriCoach wie eine App.</p>
+    <h3 style="margin-top:18px">Daten</h3>
+    <p class="mute small">Deine Daten sind nur auf diesem Gerät gespeichert. Mach ab und zu ein Backup.</p>
+    <button class="btn ghost block" style="margin-bottom:8px" data-act="downloadExport">Backup herunterladen</button>
+    <label class="btn ghost block" style="margin-bottom:8px;cursor:pointer">Backup wiederherstellen<input type="file" id="restoreFile" accept=".json,application/json" style="display:none"></label>
+    <button class="btn ghost block" data-act="copyExport">Backup kopieren</button>
+    <button class="btn ghost block" style="margin-top:8px;color:#ff8f8f" data-act="reset">Alles zurücksetzen</button>
+  </div></div>`;
+}
+function eventSheet(){
+  return `<div class="overlay" data-close="1"><div class="sheet">
+    <div class="row between"><h2 style="margin:0">Wettkampf</h2><button class="iconbtn" data-act="closeSheet">${ICON.x}</button></div>
+    <label class="f">Name</label><input class="i" id="evName" placeholder="z. B. Allgäu Triathlon Classic">
+    <label class="f">Datum</label><input class="i" type="date" id="evDate" min="${today()}">
+    <label class="f">Art</label><select class="i" id="evType">${["Triathlon Mitteldistanz (70.3)","Triathlon Olympisch","Triathlon Sprint","Triathlon Langdistanz","Laufen 5 km","Laufen 10 km","Halbmarathon","Marathon","Radrennen","Hyrox","Kraftwettkampf","Anderes"].map(x=>`<option>${x}</option>`).join("")}</select>
+    <label class="f">Zielzeit / Ziel (optional)</label><input class="i" id="evGoal" placeholder="z. B. unter 5:45 h">
+    <label class="f">Priorität</label><select class="i" id="evPrio"><option value="A">A – Hauptziel</option><option value="B">B – wichtig</option><option value="C">C – Trainingswettkampf</option></select>
+    <button class="btn block" style="margin-top:16px" data-act="saveEvent">Hinzufügen</button>
+  </div></div>`;
+}
+function exerciseSheet(date){
+  return () => `<div class="overlay" data-close="1"><div class="sheet">
+    <div class="row between"><h2 style="margin:0">Übung hinzufügen</h2><button class="iconbtn" data-act="closeSheet">${ICON.x}</button></div>
+    <label class="f">Name</label><input class="i" id="exName" placeholder="z. B. Bizepscurls">
+    <label class="f">Art</label><select class="i" id="exKind"><option value="strength">Kraft</option><option value="cardio">Ausdauer</option></select>
+    <button class="btn block" style="margin-top:16px" data-act="saveExercise" data-date="${date}">Hinzufügen</button></div></div>`;
+}
+
+function actRow(a){
+  return `<div class="card tight" style="background:var(--panel2);margin:10px 0 0"><div class="row between"><span class="small" style="font-weight:700">${ICON.watch.replace('width="20" height="20"','width="15" height="15"')} Garmin · ${esc(KIND_L[a.kind]||"Aktivität")}</span><span class="dim small">${new Date(a.start).toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})}</span></div>
+  <div class="kv" style="margin-top:6px">${a.km?`<span><b>${a.km}</b> km</span>`:""}<span><b>${fmtDur(a.durationSec)}</b></span>${a.pace?`<span><b>${esc(a.pace)}</b></span>`:""}${a.avgHr?`<span>Ø Puls <b>${a.avgHr}</b></span>`:""}${a.maxHr?`<span>max <b>${a.maxHr}</b></span>`:""}${a.kcal?`<span><b>${a.kcal}</b> kcal</span>`:""}${a.sets?`<span><b>${a.sets}</b> Sätze erfasst</span>`:""}</div></div>`;
+}
+const ago = t => { if(!t) return "noch nie"; const m=Math.round((Date.now()-t)/60000); return m<1?"gerade eben":m<60?`vor ${m} min`:m<1440?`vor ${Math.round(m/60)} h`:`vor ${Math.round(m/1440)} Tagen`; };
+function garminSheet(){
+  const c=S.conn;
+  return `<div class="overlay" data-close="1"><div class="sheet">
+    <div class="row between"><h2 style="margin:0">Verbindungen</h2><button class="iconbtn" data-act="closeSheet">${ICON.x}</button></div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="row between"><h3>${ICON.watch} Garmin live</h3>${icuOn()?`<span class="tag" style="color:${c.lastError?"var(--warn)":"var(--ok)"}">${c.lastError?"Problem":"Verbunden"}</span>`:`<span class="tag">Aus</span>`}</div>
+      <p class="mute small" style="margin:6px 0 0">Über das kostenlose <b>intervals.icu</b>: Jedes Training von der Uhr erscheint automatisch hier, und dein Wochenplan landet als Workouts auf der Uhr.</p>
+      ${icuOn()?`<p class="small" style="margin:10px 0 0">Letzter Abgleich: <b>${ago(c.lastSync)}</b>${c.lastError?`<br><span style="color:var(--warn)">${esc(c.lastError)}</span>`:""}</p>
+        <div class="row" style="gap:8px;margin-top:10px"><button class="btn sm grow" data-act="syncNow" ${busy.sync?"disabled":""}>${busy.sync?'<span class="spinner"></span>':""} Jetzt abgleichen</button><button class="btn ghost sm grow" data-act="pushNow" ${busy.push||!S.plan?"disabled":""}>${busy.push?'<span class="spinner"></span>':""} Plan an Uhr senden</button></div>
+        <label class="row small" style="margin-top:12px;gap:8px;cursor:pointer"><input type="checkbox" id="autoPush" ${c.autoPush?"checked":""}> Neue und geänderte Pläne automatisch an die Uhr senden</label>`:""}
+      <label class="f">intervals.icu API-Schlüssel</label>
+      <input class="i" id="icuKey" type="password" autocomplete="off" value="${esc(c.icuKey)}" placeholder="aus intervals.icu → Settings → Developer Settings">
+      <label class="f">Athleten-ID (optional)</label>
+      <input class="i" id="icuId" value="${esc(c.icuId==="0"?"":c.icuId)}" placeholder="z. B. i123456 – leer lassen geht meistens">
+      <button class="btn block" style="margin-top:12px" data-act="saveIcu" ${busy.icuTest?"disabled":""}>${busy.icuTest?'<span class="spinner"></span> Teste …':(icuOn()?"Speichern & testen":"Verbinden")}</button>
+      <details style="margin-top:14px"><summary class="small" style="cursor:pointer;font-weight:600">Einrichtung (einmalig, ca. 5 Minuten)</summary>
+        <ol class="small" style="padding-left:20px;line-height:1.7;margin:10px 0 0">
+          <li>Auf <a href="https://intervals.icu" target="_blank" rel="noopener" style="color:var(--accent)">intervals.icu</a> kostenlos registrieren.</li>
+          <li><b>Settings → Connections → Garmin Connect</b> verbinden. Dabei <b>beide</b> Häkchen erlauben: Aktivitäten herunterladen <i>und</i> „Upload planned workouts“.</li>
+          <li>Wichtig: Garmin <b>direkt</b> verbinden, nicht über Strava (Strava-Daten gibt intervals.icu nicht an Apps weiter).</li>
+          <li>Ganz unten in <b>Settings → Developer Settings</b> einen API-Key erzeugen, kopieren und oben einfügen.</li>
+          <li>Fertig. Ab jetzt nach jedem Training einfach die Uhr mit der Garmin-Connect-App syncen.</li>
+        </ol></details>
+    </div>
+
+    <div class="card">
+      <div class="row between"><h3>${ICON.spark} KI-Coach</h3><span class="tag" style="${c.gemKey?"color:var(--ok)":""}">${c.gemKey?"Aktiv":"Aus"}</span></div>
+      <p class="mute small" style="margin:6px 0 0">Plant deine Wochen, passt sie im Chat an und gibt Feedback. Läuft über einen <b>kostenlosen</b> Google-Gemini-Schlüssel.</p>
+      <label class="f">Google-KI-Schlüssel</label>
+      <input class="i" id="gemKey" type="password" autocomplete="off" value="${esc(c.gemKey)}" placeholder="AIza…">
+      <label class="f">Modell</label>
+      <select class="i" id="gemModel">${[["","Automatisch – stabilstes Modell"+(c.autoModel?" ("+c.autoModel+")":"")],...[...new Set([...(c.models||[]),...(c.gemModel?[c.gemModel]:[])])].map(m=>[m,m])].map(([v,l])=>`<option value="${v}" ${c.gemModel===v?"selected":""}>${esc(l)}</option>`).join("")}</select>
+      <button class="btn block" style="margin-top:12px" data-act="saveGem" ${busy.gemTest?"disabled":""}>${busy.gemTest?'<span class="spinner"></span> Teste …':"Speichern & testen"}</button>
+      <details style="margin-top:14px"><summary class="small" style="cursor:pointer;font-weight:600">Schlüssel holen (1 Minute)</summary>
+        <ol class="small" style="padding-left:20px;line-height:1.7;margin:10px 0 0">
+          <li><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:var(--accent)">aistudio.google.com/apikey</a> öffnen und mit Google-Konto anmelden.</li>
+          <li><b>API-Schlüssel erstellen</b> tippen, kopieren und oben einfügen.</li>
+          <li>Keine Zahlungsdaten eingeben – dann bleibt es gratis. Wird das Tageslimit erreicht, einfach später nochmal.</li>
+        </ol></details>
+    </div>
+
+    <details class="card"><summary style="cursor:pointer;font-weight:700">Ohne intervals.icu: Garmin-Datei importieren</summary>
+      <p class="mute small">Auf connect.garmin.com Aktivität öffnen → ⚙ → „Original exportieren“, dann die .zip hier wählen.</p>
+      <label class="btn ghost block" style="cursor:pointer">${ICON.upload} Datei auswählen (.fit/.zip/.gpx/.tcx)<input type="file" id="garminFile" accept=".fit,.gpx,.tcx,.zip,application/zip,application/octet-stream" multiple style="display:none"></label>
+    </details>
+    <p class="dim small">Schlüssel werden nur auf diesem Gerät gespeichert und nur an intervals.icu bzw. Google geschickt.</p>
+  </div></div>`;
+}
+
+/* ============ actions ============ */
+function dayById(date){ return S.plan?.days.find(d=>d.date===date) || allPlannedDays()[date]; }
+function newLog(d){
+  return { date:d.date, title:d.title, type:d.type, done:false, rpe:null, note:"", duration:d.durationMin||"",
+    items: d.items.map(it=> it.kind==="strength"
+      ? { name:it.name, kind:"strength", sets: Array.from({length:Math.max(1,+it.sets||3)},()=>({reps: num(it.reps)??"", kg: num(it.load)!==null && /kg/i.test(it.load) ? num(it.load) : "", done:false})) }
+      : { name:it.name, kind:"cardio", distance:"", time:"", done:false }) };
+}
+
+async function doGenerate(start, extra, target){
+  busy.gen = true; render();
+  try{
+    let plan;
+    if (sample){ plan = await generateWeek(start, extra); }
+    else { plan = templateWeek(start); toast("Ohne KI-Schlüssel – Standardplan erstellt"); }
+    if (target==="next"){ S.nextPlan = plan; save("nextPlan"); toast("Nächste Woche ist geplant"); autoPush(plan); }
+    else { S.plan = plan; save("plan"); autoPush(plan); selDate = S.plan.days.some(d=>d.date===today()) ? today() : S.plan.days[0].date; toast("Neue Woche steht 💪"); }
+  }catch(e){
+    console.error(e);
+    if (e?.code==="not_granted"){ sample=null; }
+    if (!S.plan && target!=="next"){ S.plan = templateWeek(start); save("plan"); autoPush(S.plan); toast("Standardplan erstellt – "+(e?.message||"KI-Fehler")); }
+    else toast("Planung fehlgeschlagen: "+(e?.message||"Fehler"));
+  }
+  busy.gen=false; render();
+}
+
+const chatTools = () => [
+  { name:"update_day", description:"Ersetzt die Einheit eines Tages im aktuellen Wochenplan. Nutze das, wenn der Athlet eine Änderung an einem Training wünscht.",
+    inputSchema:{type:"object",properties:{date:{type:"string",description:"YYYY-MM-DD"},title:{type:"string"},type:{type:"string",enum:Object.keys(TYPES)},durationMin:{type:"number"},intensity:{type:"string"},notes:{type:"string"},garmin:{type:"string",description:"Bei Ausdauer: Schritte im intervals.icu-Textformat (z.B. '- 10m Z1 HR'), sonst leer"},
+      items:{type:"array",items:{type:"object",properties:{name:{type:"string"},kind:{type:"string",enum:["strength","cardio"]},sets:{type:"number"},reps:{type:"string"},load:{type:"string"},target:{type:"string"},notes:{type:"string"}},required:["name","kind"]}}},required:["date","title","type","items"]},
+    execute(inp){ if(!S.plan) throw new Error("Kein Plan"); const i=S.plan.days.findIndex(d=>d.date===inp.date); if(i<0) throw new Error("Datum nicht in dieser Woche");
+      const np = normalizePlan({days:S.plan.days.map((d,k)=>k===i?inp:d)}, parseD(S.plan.start)); S.plan.days[i]=np.days[i]; save("plan"); return {ok:true}; } },
+  { name:"swap_days", description:"Tauscht die Einheiten zweier Tage im aktuellen Wochenplan.",
+    inputSchema:{type:"object",properties:{a:{type:"string"},b:{type:"string"}},required:["a","b"]},
+    execute({a,b}){ const da=S.plan?.days.find(d=>d.date===a), dbb=S.plan?.days.find(d=>d.date===b); if(!da||!dbb) throw new Error("Datum nicht gefunden");
+      const keys=["title","type","durationMin","intensity","notes","items"]; for(const k of keys){ const t=da[k]; da[k]=dbb[k]; dbb[k]=t; } save("plan"); return {ok:true}; } },
+  { name:"add_event", description:"Trägt einen Wettkampf in die Saison ein.",
+    inputSchema:{type:"object",properties:{name:{type:"string"},date:{type:"string"},type:{type:"string"},goal:{type:"string"},prio:{type:"string",enum:["A","B","C"]}},required:["name","date","type"]},
+    execute(e){ S.season.events.push({id:uid(),prio:"A",...e}); save("season"); return {ok:true}; } }
+];
+
+async function sendChat(text){
+  text = text.trim(); if(!text) return;
+  S.chat.push({role:"user",content:text}); save("chat");
+  if (!sample){ S.chat.push({role:"sys",content:"Für den Chat-Coach brauchst du einen kostenlosen Google-KI-Schlüssel (oben Uhr-Symbol → Verbindungen)."}); save("chat"); render(); return; }
+  busy.chat=true; busy.chatText="…"; render();
+  const planTxt = S.plan ? JSON.stringify({start:S.plan.start,phase:S.plan.phase,focus:S.plan.focus,days:S.plan.days.map(d=>({date:d.date,dow:DOWL[(parseD(d.date).getDay()+6)%7],title:d.title,type:d.type,durationMin:d.durationMin,intensity:d.intensity,items:d.items,done:!!S.logs[d.date]?.done}))}) : "kein Plan";
+  const system = `Du bist "Coach" in der App TriCoach: ein erfahrener, direkter, motivierender Triathlon-Trainer (Schwimmen, Rad, Laufen, Kraft). Antworte auf Deutsch, locker und knapp (max. ~120 Wörter, keine Markdown-Überschriften). Heute ist ${fmtD(today())} (${today()}).
+Wenn der Athlet eine Planänderung möchte, ändere den Plan wirklich mit den Tools (update_day / swap_days) und sag danach kurz, was du geändert hast. Erfinde keine Daten außerhalb der aktuellen Woche. Bei Schmerzen/Verletzungen: vorsichtig sein und ggf. Arzt/Physio empfehlen.
+
+ATHLET:
+${profileText()}
+
+SAISON:
+${seasonText()}
+
+LETZTE TRAININGS:
+${recentText()}
+
+AKTUELLER WOCHENPLAN (JSON):
+${planTxt}`;
+  const hist = S.chat.filter(m=>m.role!=="sys").slice(-12).map(m=>({role:m.role,content:m.content}));
+  hist[0] = hist[0].role==="user" ? {role:"user",content:system+"\n\n---\nAthlet: "+hist[0].content} : hist[0];
+  if (hist[0].role!=="user") hist.unshift({role:"user",content:system});
+  const msgs=[]; for (const m of hist){ if(msgs.length && msgs[msgs.length-1].role===m.role) msgs[msgs.length-1].content+="\n"+m.content; else msgs.push({...m}); }
+  if (msgs[0].role==="user" && !msgs[0].content.startsWith(system)) msgs[0].content = system+"\n\n---\nAthlet: "+msgs[0].content;
+  try{
+    const before = JSON.stringify(S.plan);
+    const r = await sample(msgs, { cache:false, tools: chatTools(), onText: ({text}) => { busy.chatText=text; const el=$("#streamTxt"); if(el) el.textContent=text; } });
+    S.chat.push({role:"assistant",content:r.text||"…"});
+    if (JSON.stringify(S.plan)!==before){ S.chat.push({role:"sys",content:"✓ Plan aktualisiert"+(icuOn()&&S.conn.autoPush?" und an Garmin gesendet":"")}); autoPush(S.plan); }
+  }catch(e){
+    console.error(e);
+    S.chat.push({role:"sys",content: e?.message || "Coach nicht erreichbar."});
+  }
+  S.chat = S.chat.slice(-60); save("chat");
+  busy.chat=false; render();
+}
+
+async function doReview(date){
+  const d=dayById(date), l=S.logs[date]; if(!d||!l) return;
+  if (!sample){ toast("Dafür brauchst du den Google-KI-Schlüssel (Uhr-Symbol → Einstellungen)"); return; }
+  busy.review=true; render();
+  try{
+    const r = await sample(`Du bist ein Triathlon-Coach. Vergleiche Plan und tatsächliche Ausführung dieser Einheit. Gib kurzes, konkretes Feedback auf Deutsch (max. 90 Wörter, kein Markdown): 1) Bewertung der Ausführung, 2) was gut war, 3) konkrete Anpassung fürs nächste Mal (Gewicht/Pace).
+Athlet: ${profileText()}
+PLAN: ${JSON.stringify(d)}
+AUSGEFÜHRT: ${JSON.stringify(l)}`, { modelTier:"default" });
+    l.review = r.text.trim(); save("logs");
+  }catch(e){ toast("Feedback fehlgeschlagen: "+e.message); }
+  busy.review=false; render();
+}
+
+async function doSeasonPlan(){
+  if (!sample){ toast("Dafür brauchst du den Google-KI-Schlüssel (Uhr-Symbol → Einstellungen)"); return; }
+  busy.season=true; render();
+  try{
+    const r = await sample(`Du bist ein Triathlon-Coach. Erstelle einen kompakten Saisonplan auf Deutsch (max. 180 Wörter, kein Markdown, einfache Zeilen mit "–"). Gliedere in Phasen bis zum Hauptwettkampf mit Zeitraum (Kalenderwochen oder Daten), Fokus und wöchentlichen Kernelementen. Heute: ${today()}.
+ATHLET: ${profileText()}
+WETTKÄMPFE: ${seasonText()}
+LETZTE TRAININGS: ${recentText()}`, { modelTier:"complex" });
+    S.season.overview = r.text.trim(); save("season");
+  }catch(e){ toast("Fehlgeschlagen: "+e.message); }
+  busy.season=false; render();
+}
+
+
+/* ============ Coach-Interview (Erstgespräch vor dem Plan) ============ */
+let ivAfter = null;
+function ivOn(){ return !!(S.interview.active && sample); }
+function needIv(){ return !!sample && !S.interview.done; }
+function interviewSystem(turns){
+  const stage = turns<6 ? "Du darfst noch NICHT abschließen (done muss false sein)."
+    : turns>=12 ? "Du hast genug gefragt: schließe JETZT ab (done true) und liefere die Zusammenfassung."
+    : "Schließe ab (done true), sobald du alles Wichtige weißt. Meist reichen 8 bis 11 Antworten.";
+  return `Du bist ein professioneller Triathlon- und Ausdauer-Sportcoach mit Trainerlizenz und langjähriger Erfahrung (Mittel- und Langdistanz, Periodisierung, Kraft- und Athletiktraining). Bevor du einen Trainingsplan baust, führst du mit dem Athleten ein Erstgespräch (Anamnese), so wie ein guter Coach es beim ersten Treffen tut.
+
+REGELN FÜRS GESPRÄCH
+- Stelle pro Nachricht GENAU EINE Frage. Kurz, freundlich, direkt, Du-Form, Deutsch. Höchstens 3 Sätze, kein Markdown, keine Listen.
+- Gehe auf die letzte Antwort mit einem kurzen Satz ein (Einordnung oder Rückfrage), bevor du die nächste Frage stellst. Hake nach, wenn eine Antwort vage ist (zum Beispiel: ungefähr wie viele Kilometer pro Woche?).
+- Frage nichts ab, was unten unter BEKANNTE DATEN schon steht. Gehe dort lieber in die Tiefe.
+- Themen, die du im Gespräch abdeckst (Reihenfolge nach Gespür):
+  1) Wettkampfziel (Wettkampf, Datum, Zielzeit oder Ankommen) und Motivation.
+  2) Erfahrung und aktueller Stand in Schwimmen, Rad und Laufen: Umfang pro Woche, typische Leistung (Pace, Watt, Puls), Technik, Schwächen.
+  3) Trainingshistorie der letzten 8 bis 12 Wochen und aktuelle Belastbarkeit.
+  4) Gesundheit: Verletzungen, Beschwerden, Vorerkrankungen.
+  5) Alltag: Beruf, Schichtdienst, Familie, Schlaf, Stress. Daraus: Welche Tage und Zeitfenster sind realistisch, wann gehen lange Einheiten?
+  6) Ausstattung und Umgebung: Rennrad oder Rolle, Schwimmbad oder Freiwasser, Uhr, Pulsgurt, Wattmessung, Kraft-Equipment.
+  7) Kraft und Mobilität: Erfahrung und Vorlieben.
+  8) Vorlieben, Abneigungen und Wünsche an den Coach.
+- Du fragst NICHT, an wie vielen Tagen pro Woche der Athlet trainieren will und auch nicht, wie lange eine Einheit dauern soll. Beides legst du später als Coach selbst fest. Frage stattdessen nach Alltag, freien Tagen und Zeitfenstern.
+- Bei Schmerzen, Verletzungen oder Gesundheitsthemen: nachfragen, vorsichtig bleiben und bei Unklarheit Arzt oder Physio empfehlen.
+- Keine Pläne und keine Trainingstipps in dieser Phase, nur Fragen und kurze Einordnung.
+
+STAND: Der Athlet hat bisher ${turns} Mal geantwortet. ${stage}
+
+BEKANNTE DATEN
+${profileText()}
+
+WETTKÄMPFE
+${seasonText()}
+
+LETZTE TRAININGS
+${recentText()}
+
+AUSGABE: Antworte NUR mit JSON in genau diesem Format:
+{"message":"deine nächste Nachricht an den Athleten","done":false,"summary":""}
+Wenn du abschließt: "done":true, "message" = kurze Verabschiedung (höchstens 2 Sätze, sag, dass du jetzt den Plan baust, keine Frage mehr) und "summary" = deine Anamnese als Coach-Notiz (höchstens 260 Wörter, Stichpunkte mit "–"): Ziel und Wettkampf, Stand je Disziplin mit Zahlen, Schwächen, Gesundheit und Einschränkungen, Verfügbarkeit im Alltag (Tage, Zeitfenster, wann lange Einheiten möglich sind), Ausstattung, Vorlieben, deine Einschätzung (wie viele Trainingstage pro Woche du empfiehlst, Schwerpunkte der nächsten Wochen, worauf du achtest).`;
+}
+async function startInterview(after){
+  ivAfter = after || null;
+  S.interview = { active:true, done:false, skipped:false, msgs:[], summary:"", err:"" }; save("interview");
+  sheet=null; render(); window.scrollTo(0,0);
+  await ivTurn();
+}
+async function ivTurn(){
+  const iv = S.interview; if (busy.iv) return;
+  busy.iv = true; iv.err = ""; render();
+  try{
+    const turns = iv.msgs.filter(m=>m.role==="user").length;
+    const transcript = iv.msgs.map(m=>(m.role==="user"?"ATHLET: ":"COACH: ")+m.content).join("\n");
+    const opening = "(noch nichts, du beginnst jetzt: begrüße den Athleten kurz"+(S.profile.name?" mit Vornamen ("+S.profile.name+")":"")+", stelle dich in einem Satz als sein Coach vor, sag in einem Satz, dass du erst ein paar Fragen stellst, bevor du den Plan baust, und stelle die erste Frage)";
+    const prompt = interviewSystem(turns) + "\n\nGESPRÄCH BISHER:\n" + (transcript || opening) + "\n\nSchreibe jetzt deine nächste Nachricht als Coach.";
+    const r = await aiJSON(prompt, "default");
+    const msg = String(r?.message||"").trim();
+    const finish = turns>=12 || (r?.done===true && turns>=6);
+    if (!finish){
+      if (!msg) throw new Error("Der Coach hat nichts geantwortet. Bitte nochmal versuchen.");
+      iv.msgs.push({role:"assistant",content:msg}); save("interview");
+      busy.iv=false; render();
+      const inp=$("#ivIn"); if (inp) inp.focus();
+      return;
+    }
+    const answers = iv.msgs.filter(m=>m.role==="user").map(m=>"– "+m.content).join("\n");
+    iv.summary = String(r?.summary||"").trim() || ("Antworten des Athleten im Erstgespräch:\n"+answers);
+    if (msg && r?.done===true){ iv.msgs.push({role:"assistant",content:msg}); S.chat.push({role:"assistant",content:msg}); save("chat"); }
+    iv.done = true; iv.active = false; save("interview");
+    busy.iv=false; render(); toast("Danke! Dein Coach baut jetzt deinen Plan");
+    const a = ivAfter || {start:planStart()}; ivAfter = null;
+    await doGenerate(a.start, a.extra||"", a.target);
+    return;
+  }catch(e){ console.error(e); iv.err = e?.message || "Der Coach ist gerade nicht erreichbar."; save("interview"); }
+  busy.iv=false; render();
+}
+async function ivSend(text){
+  text = (text||"").trim(); if (!text || busy.iv) return;
+  S.interview.msgs.push({role:"user",content:text}); save("interview");
+  await ivTurn();
+}
+async function ivSkip(){
+  if (busy.iv) return;
+  const iv = S.interview;
+  const answers = iv.msgs.filter(m=>m.role==="user").map(m=>"– "+m.content).join("\n");
+  iv.summary = answers ? "Antworten aus dem vorzeitig beendeten Erstgespräch:\n"+answers : "";
+  iv.active = false; iv.done = true; iv.skipped = true; save("interview");
+  render();
+  const a = ivAfter || {start:planStart()}; ivAfter = null;
+  await doGenerate(a.start, a.extra||"", a.target);
+}
+function viewInterview(){
+  const iv = S.interview;
+  const n = iv.msgs.filter(m=>m.role==="user").length;
+  const pct = Math.min(95, Math.round(n/10*100));
+  return `<div style="padding-top:8px">
+    <div class="brand" style="margin-bottom:18px">${LOGO}TriCoach</div>
+    <h1>Kennenlern-<span style="color:var(--accent)">Gespräch</span></h1>
+    <p class="mute" style="margin:8px 0 0">Dein Coach stellt dir ein paar Fragen, bevor er deinen Plan baut. Das dauert etwa 5 Minuten. Je genauer du antwortest, desto besser passt der Plan.</p>
+    <div class="ivbar"><div style="width:${pct}%"></div></div>
+    <div class="chat">
+      ${iv.msgs.map(m=>`<div class="msg ${m.role==="user"?"u":"a"}">${esc(m.content)}</div>`).join("")}
+      ${busy.iv?`<div class="msg a dim">Coach schreibt …</div>`:""}
+      ${iv.err?`<div class="card small" style="border-color:var(--warn)"><b style="color:var(--warn)">Das hat nicht geklappt.</b><div class="mute" style="margin:4px 0 10px">${esc(iv.err)}</div><button class="btn sm" data-act="ivRetry">Nochmal versuchen</button></div>`:""}
+      <button class="btn ghost sm" style="align-self:center;margin-top:6px" data-act="ivSkip" ${busy.iv?"disabled":""}>Ohne Gespräch direkt planen lassen</button>
+      <div id="ivEnd" style="height:96px"></div>
+    </div>
+    <div class="composer iv"><form class="in" id="ivForm"><textarea id="ivIn" rows="2" placeholder="Deine Antwort …" ${busy.iv?"disabled":""}></textarea><button class="btn sm" style="align-self:flex-end" ${busy.iv?"disabled":""}>Senden</button></form></div>
+  </div>`;
+}
+
+/* ============ events ============ */
+document.addEventListener("click", async e => {
+  const el = e.target.closest("[data-act],[data-tab],[data-sel],[data-open],[data-openlog],[data-obsport],[data-pfsport],[data-oblevel],[data-setdone],[data-cdone],[data-addset],[data-rmset],[data-rpe],[data-delev],[data-quick],[data-close]");
+  if (!el) return;
+  const ds = el.dataset;
+  if (ds.close && e.target===el){ sheet=null; render(); return; }
+  if (ds.tab) return setTab(ds.tab);
+  if (ds.sel){ selDate=ds.sel; return render(); }
+  if (ds.open){ selDate=ds.open; return setTab("heute"); }
+  if (ds.openlog){ const d=ds.openlog; if (S.plan?.days.some(x=>x.date===d)){ selDate=d; return setTab("heute"); } const l=S.logs[d]; toast(`${l.title}: RPE ${l.rpe||"–"}${l.note?" · "+l.note:""}`); return; }
+  if (ds.obsport){ toggleSport(ob.sports, ds.obsport); return render(); }
+  if (ds.pfsport){ toggleSport(S.profile.sports, ds.pfsport); save("profile"); return render(); }
+  if (ds.oblevel){ ob.level=ds.oblevel; return render(); }
+  if (ds.setdone){ const [i,j]=ds.setdone.split(".").map(Number); const l=S.logs[selDate]; const s=l.items[i].sets[j]; s.done=!s.done; save("logs"); return render(); }
+  if (ds.cdone){ const l=S.logs[selDate]; const it=l.items[+ds.cdone]; it.done=!it.done; save("logs"); return render(); }
+  if (ds.addset){ const it=S.logs[selDate].items[+ds.addset]; const last=it.sets[it.sets.length-1]||{}; it.sets.push({reps:last.reps??"",kg:last.kg??"",done:false}); save("logs"); return render(); }
+  if (ds.rmset){ S.logs[selDate].items[+ds.rmset].sets.pop(); save("logs"); return render(); }
+  if (ds.rpe){ S.logs[selDate].rpe=+ds.rpe; save("logs"); return render(); }
+  if (ds.delev){ S.season.events = S.season.events.filter(x=>x.id!==ds.delev); save("season"); return render(); }
+  if (ds.quick){ setTab("coach"); return sendChat(ds.quick); }
+  const a = ds.act;
+  if (a==="finishOnboarding"){
+    if (!ob.sports.length) { toast("Wähle mindestens eine Sportart"); return; }
+    if (ob.gemKey){ S.conn.gemKey = ob.gemKey.trim(); save("conn"); initCaps(); }
+    const {gemKey, ...prof} = ob;
+    Object.assign(S.profile, prof, {onboarded:true}); save("profile");
+    if (sample){ await startInterview({start:planStart()}); return; }
+    busy.ob=true; render();
+    await doGenerate(planStart());
+    busy.ob=false; render();
+  }
+  if (a==="profile"){ sheet=profileSheet; render(); }
+  if (a==="garmin"){ sheet=garminSheet; render(); }
+  if (a==="syncNow") syncGarmin(true);
+  if (a==="pushNow") pushPlan(S.plan, true).then(()=>{ if (S.nextPlan) pushPlan(S.nextPlan); });
+  if (a==="saveIcu"){
+    S.conn.icuKey = $("#icuKey").value.trim(); S.conn.icuId = $("#icuId").value.trim() || "0"; save("conn");
+    if (!S.conn.icuKey){ toast("Garmin-Verbindung entfernt"); render(); return; }
+    busy.icuTest=true; render();
+    try{ const ath = await icu("/athlete/{id}"); S.conn.lastError=""; save("conn"); toast("Verbunden mit "+(ath?.name||"intervals.icu")+" ✔");
+      busy.icuTest=false; await syncGarmin(false); if (S.plan) await pushPlan(S.plan); }
+    catch(err){ S.conn.lastError=err.message; save("conn"); toast(err.message); busy.icuTest=false; }
+    render();
+  }
+  if (a==="saveGem"){
+    const newKey = $("#gemKey").value.trim(); if (newKey!==S.conn.gemKey){ S.conn.autoModel=""; S.conn.models=[]; } S.conn.gemKey = newKey; S.conn.gemModel = $("#gemModel").value; save("conn"); initCaps();
+    if (!sample){ toast("KI-Coach ausgeschaltet"); render(); return; }
+    busy.gemTest=true; render();
+    try{ await sample("Antworte nur mit: OK"); toast("KI-Coach aktiv ✔ ("+(S.conn.gemModel||S.conn.autoModel)+")"); }catch(err){ toast(err.message); }
+    busy.gemTest=false; render();
+  }
+  if (a==="downloadExport"){ const b=new Blob([JSON.stringify({...S, conn:{...S.conn, gemKey:"", icuKey:""}})],{type:"application/json"}); const u=URL.createObjectURL(b); const el2=document.createElement("a"); el2.href=u; el2.download="tricoach-backup-"+today()+".json"; document.body.appendChild(el2); el2.click(); el2.remove(); setTimeout(()=>URL.revokeObjectURL(u),2000); }
+  if (a==="closeSheet"){ sheet=null; render(); }
+  if (a==="saveProfile"){ document.querySelectorAll("[data-pf]").forEach(i=>{ S.profile[i.dataset.pf] = false?+i.value:i.value; }); save("profile"); sheet=null; toast("Gespeichert"); render(); }
+  if (a==="copyExport"){ try{ await navigator.clipboard.writeText(JSON.stringify(S)); toast("Backup in die Zwischenablage kopiert"); }catch(err){ toast("Kopieren nicht möglich"); } }
+  if (a==="reset"){ if (el.dataset.confirm!=="1"){ el.dataset.confirm="1"; el.textContent="Wirklich alles löschen? Nochmal tippen"; return; }
+    for (const k of KEYS){ if (k==="conn") continue; S[k]=structuredClone(DEF[k]); save(k); } S.nextPlan=null; save("nextPlan"); ob=null; sheet=null; render(); }
+  if (a==="genWeek"){ if (needIv()) startInterview({start:planStart()}); else doGenerate(planStart()); }
+  if (a==="regenWeek"){ const w=($("#weekWish")?.value||"").trim(), st=parseD(S.plan.start); if (needIv()) startInterview({start:st, extra:w}); else doGenerate(st, w); }
+  if (a==="planNext"){ const st=addDays(parseD(S.plan.start),7); if (needIv()) startInterview({start:st, target:"next"}); else doGenerate(st, "", "next"); }
+  if (a==="ivRetry") ivTurn();
+  if (a==="ivSkip") ivSkip();
+  if (a==="ivRestart") startInterview({start:S.plan?parseD(S.plan.start):planStart()});
+  if (a==="startLog"){ const d=dayById(ds.date); S.logs[d.date]=newLog(d); save("logs"); render(); window.scrollTo(0,0); }
+  if (a==="cancelLog"){ const l=S.logs[ds.date]; if (l?.editing){ delete l.editing; l.done=true; } else delete S.logs[ds.date]; save("logs"); render(); }
+  if (a==="editLog"){ const l=S.logs[ds.date]; l.editing=true; l.done=false; save("logs"); render(); }
+  if (a==="finishLog"){ const l=S.logs[ds.date]; l.done=true; delete l.editing; l.finishedAt=Date.now(); l.review=null; save("logs"); toast("Stark! Training gespeichert ✔"); render(); window.scrollTo(0,0); }
+  if (a==="review") doReview(ds.date);
+  if (a==="quickAdjust"){ setTab("coach"); sendChat(ds.q+` (Betrifft das Training am ${fmtD(ds.date)}, ${ds.date}. Bitte direkt anpassen.)`); }
+  if (a==="askSwap"){ setTab("coach"); sendChat(`Ich möchte am ${fmtD(ds.date)} (${ds.date}) doch trainieren. Was schlägst du vor? Bitte trag es ein, wenn es Sinn macht.`); }
+  if (a==="addEvent"){ sheet=eventSheet; render(); }
+  if (a==="saveEvent"){ const name=$("#evName").value.trim(), date=$("#evDate").value; if(!name||!date){ toast("Name und Datum angeben"); return; }
+    S.season.events.push({id:uid(),name,date,type:$("#evType").value,goal:$("#evGoal").value.trim(),prio:$("#evPrio").value}); S.season.overview=null; save("season"); sheet=null; toast("Wettkampf eingetragen"); render(); }
+  if (a==="seasonPlan") doSeasonPlan();
+  if (a==="addExercise"){ sheet=exerciseSheet(ds.date); render(); }
+  if (a==="saveExercise"){ const n=$("#exName").value.trim(); if(!n) return; const k=$("#exKind").value; const l=S.logs[ds.date]; const d=dayById(ds.date);
+    d.items.push({name:n,kind:k,sets:k==="strength"?3:1,reps:"",load:"",target:"",notes:"hinzugefügt"}); save("plan");
+    l.items.push(k==="strength"?{name:n,kind:"strength",sets:[{reps:"",kg:"",done:false},{reps:"",kg:"",done:false},{reps:"",kg:"",done:false}]}:{name:n,kind:"cardio",distance:"",time:"",done:false}); save("logs"); sheet=null; render(); }
+});
+document.addEventListener("input", e => {
+  const t=e.target, ds=t.dataset;
+  if (ds.ob){ ob[ds.ob]=t.value; }
+  if (ds.lg){ const [i,j,k]=ds.lg.split("."); S.logs[selDate].items[+i].sets[+j][k]=t.value; save("logs"); }
+  if (ds.lc){ const [i,k]=ds.lc.split("."); S.logs[selDate].items[+i][k]=t.value; save("logs"); }
+  if (ds.lf){ S.logs[selDate][ds.lf]=t.value; save("logs"); }
+});
+document.addEventListener("change", e => { if (e.target.dataset.ob) ob[e.target.dataset.ob]=e.target.value; if (e.target.id==="garminFile" && e.target.files.length) importFiles([...e.target.files]);
+  if (e.target.id==="autoPush"){ S.conn.autoPush=e.target.checked; save("conn"); }
+  if (e.target.id==="restoreFile" && e.target.files[0]) e.target.files[0].text().then(t=>{ try{ const d=JSON.parse(t); for (const k of KEYS) if (d[k]!==undefined && k!=="conn"){ S[k]=d[k]; save(k); } if(d.nextPlan){S.nextPlan=d.nextPlan; save("nextPlan");} sheet=null; toast("Backup wiederhergestellt ✔"); render(); }catch(err){ toast("Ungültige Backup-Datei"); } });
+});
+document.addEventListener("keydown", e => { if (e.target.id==="ivIn" && e.key==="Enter" && !e.shiftKey && !e.isComposing){ e.preventDefault(); $("#ivForm")?.requestSubmit(); } });
+document.addEventListener("submit", e => { if (e.target.id==="ivForm"){ e.preventDefault(); const i=$("#ivIn"); const v=i.value; i.value=""; ivSend(v); return; } if (e.target.id==="chatForm"){ e.preventDefault(); const i=$("#chatIn"); const v=i.value; i.value=""; sendChat(v); } });
+
+/* next-week rollover */
+try{ S.nextPlan = JSON.parse(localStorage.getItem(LS+"nextPlan")); }catch(e){ S.nextPlan=null; }
+KEYS.push("nextPlan"); DEF.nextPlan=null;
+(function rollover(){
+  const cur = iso(monday(new Date()));
+  if (S.nextPlan && S.nextPlan.start===cur && (!S.plan || S.plan.start<cur)){
+    if (S.plan) { S.history.push(S.plan); save("history"); }
+    S.plan=S.nextPlan; S.nextPlan=null; save("plan"); save("nextPlan");
+  }
+})();
+
+initCaps();
+render();
+if (icuOn()){ syncGarmin(false); if (S.plan && !S.plan.pushedAt && S.conn.autoPush) pushPlan(S.plan); }
+setInterval(()=>{ if (document.visibilityState==="visible" && icuOn()) syncGarmin(false); }, 3*60*1000);
+document.addEventListener("visibilitychange", ()=>{ if (document.visibilityState==="visible" && icuOn() && Date.now()-S.conn.lastSync>60000) syncGarmin(false); });
+/* installierbar machen */
+try{
+  const icon = c => { const cv=document.createElement("canvas"); cv.width=cv.height=c; const x=cv.getContext("2d"); x.fillStyle="#0c0d0c"; x.fillRect(0,0,c,c); x.lineCap="round";
+    const ln=(col,w,x1,y1,x2,y2)=>{ x.strokeStyle=col; x.lineWidth=c*w; x.beginPath(); x.moveTo(c*x1,c*y1); x.lineTo(c*x2,c*y2); x.stroke(); };
+    ln("#3fd35f",.11,.23,.27,.77,.27); ln("#3fd35f",.11,.5,.27,.5,.70);
+    ln("#3ee0c6",.08,.23,.84,.36,.84); ln("#b48cff",.08,.44,.84,.56,.84); ln("#5cc8ff",.08,.64,.84,.77,.84);
+    return cv.toDataURL("image/png"); };
+  const base = location.href.split("#")[0];
+  const man = { name:"TriCoach", short_name:"TriCoach", start_url: base, scope: base.replace(/[^/]*$/,""), display:"standalone", background_color:"#0c0d0c", theme_color:"#0c0d0c",
+    icons:[{src:icon(192),sizes:"192x192",type:"image/png"},{src:icon(512),sizes:"512x512",type:"image/png",purpose:"any maskable"}] };
+  const l=document.createElement("link"); l.rel="manifest"; l.href="data:application/manifest+json,"+encodeURIComponent(JSON.stringify(man)); document.head.appendChild(l);
+  const t=document.createElement("link"); t.rel="apple-touch-icon"; t.href=icon(180); document.head.appendChild(t);
+}catch(e){}
+</script>
+</body>
+</html>
